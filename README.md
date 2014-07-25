@@ -21,8 +21,8 @@ Example:
 ```
 $ python getWords.py books/walden.txt wordLists/vocab_dfw.txt
 fictile - capable of being molded or modeled (especially of earth or clay or other soft material)
-internecine - (of conflict) within a group or organization This word will be tested when learning this list
-invidious - containing or implying a slight or showing prejudice This word will be tested when learning this list
+internecine - (of conflict) within a group or organization
+invidious - containing or implying a slight or showing prejudice
 pellicle - thin protective membrane in some protozoa
 pinnate - (of a leaf shape) featherlike; having leaflets on each side of a common axis
 poplar - any of numerous trees of north temperate regions having light soft wood and flowers borne in catkins
