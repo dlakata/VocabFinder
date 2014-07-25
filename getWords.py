@@ -5,7 +5,7 @@ wordList = sys.argv[2]
 
 textFile = open(book, 'r')
 vocabFile = open(wordList, 'r')
-text = textFile.read()
+text = textFile.read().replace("\r\n", " ")
 vocab = vocabFile.read()
 textFile.close()
 vocabFile.close()
@@ -14,6 +14,7 @@ vocabWords = {}
 vocab = vocab.split('\n')
 vocab.remove('')
 
+sentences = text.split('. ')
 text = text.translate(string.maketrans("", ""), "!\"#$%&'()*+-,./:;<=>?@[\]^_`{|}~0123456789")
 
 lower = text.lower().split()
@@ -34,6 +35,11 @@ def vocabulary():
     intersect = list(textWords.intersection(set(vocabWords.keys())))
     for word in sorted(intersect):
         print word + " - " + vocabWords.get(word)
+        print
+        for sen in sentences:
+            if word in sen:
+                print "\t" + sen
+                print
 
 def frequencies():
     if ".num" in wordList:

@@ -21,9 +21,10 @@ Example:
 ```
 $ python getWords.py books/walden.txt wordLists/vocab_dfw.txt
 fictile - capable of being molded or modeled (especially of earth or clay or other soft material)
-internecine - (of conflict) within a group or organization
-invidious - containing or implying a slight or showing prejudice
-pellicle - thin protective membrane in some protozoa
-pinnate - (of a leaf shape) featherlike; having leaflets on each side of a common axis
-poplar - any of numerous trees of north temperate regions having light soft wood and flowers borne in catkins
+
+	 I had read of the potter's clay and wheel in Scripture, but it had never occurred to me that the pots we use were not such as had come down unbroken from those days, or grown on trees like gourds somewhere, and I was pleased to hear that so fictile an art was ever practiced in my neighborhood
+
+internecine - (of conflict) within a group or organization 
+
+	 It was the only battle which I have ever witnessed, the only battle-field I ever trod while the battle was raging; internecine war; the red republicans on the one hand, and the black imperialists on the other
 ```
