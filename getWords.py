@@ -1,4 +1,4 @@
-import string, sys
+import string, sys, re
 
 book = sys.argv[1]
 wordList = sys.argv[2]    
@@ -11,7 +11,7 @@ for line in orig_text:
     if not line.strip():
         continue
     else:
-        text += line
+        text += line.strip() + " "
 
 vocab = vocabFile.read()
 textFile.close()
@@ -21,7 +21,7 @@ vocabWords = {}
 vocab = vocab.split('\n')
 vocab.remove('')
 
-sentences = text.split('. ')
+sentences = re.split('\. +|! |\? |\t*', text)
 text = text.translate(string.maketrans("", ""), "!\"#$%&'()*+-,./:;<=>?@[\]^_`{|}~0123456789")
 
 lower = text.lower().split()
@@ -45,7 +45,7 @@ def vocabulary():
         print
         for sen in sentences:
             if word in sen:
-                print "\t" + sen
+                print "\t" + sen.strip()
                 print
 
 def frequencies():
@@ -63,7 +63,7 @@ def frequencies():
             if word in vocabWords:
                 continue
             vocabWords[word] = freq
-    elif "en.txt" in wordList:
+    elif "en.txt" or "subtitles" in wordList:
         for line in vocab:
             freq = line.split()[1]
             word = line.split()[0]
