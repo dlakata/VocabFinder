@@ -44,7 +44,7 @@ def vocabulary():
         print word + " - " + vocabWords.get(word)
         print
         for sen in sentences:
-            if word in sen:
+            if word in sen.split():
                 print "\t" + sen.strip()
                 print
 
