@@ -1,4 +1,4 @@
-import string, sys, re
+import string, sys, re, enchant
 
 book = sys.argv[1]
 wordList = sys.argv[2]    
@@ -20,6 +20,7 @@ vocabFile.close()
 vocabWords = {}
 vocab = vocab.split('\n')
 vocab.remove('')
+vocab.pop(0)
 
 sentences = re.split('\. +|! |\? |\t*', text)
 text = text.translate(string.maketrans("", ""), "!\"#$%&'()*+-,./:;<=>?@[\]^_`{|}~0123456789")
@@ -31,11 +32,13 @@ textWords = set()
 for i in lower:
     textWords.add(i)
 
+d = enchant.Dict("en_US")
+
 def vocabulary():
     for line in vocab:
         definition = line.split('\t')[1]
         word = line.split('\t')[0]
-        if word in vocabWords:
+        if word in vocabWords or not d.check(word):
             continue
         vocabWords[word] = definition
 
@@ -50,26 +53,20 @@ def vocabulary():
 
 def frequencies():
     if ".num" in wordList:
-        for line in vocab:
-            freq = line.split()[0]
-            word = line.split()[1]
-            if word in vocabWords:
-                continue
-            vocabWords[word] = freq
+        freq_pos = 0
+        word_pos = 1
     elif "ANC" in wordList:
-        for line in vocab:
-            freq = line.split()[3]
-            word = line.split()[0]
-            if word in vocabWords:
-                continue
-            vocabWords[word] = freq
+        freq_pos = 3
+        word_pos = 0
     elif "en.txt" or "subtitles" in wordList:
-        for line in vocab:
-            freq = line.split()[1]
-            word = line.split()[0]
-            if word in vocabWords:
-                continue
-            vocabWords[word] = freq
+        freq_pos = 1
+        word_pos = 0
+    for line in vocab:
+        freq = line.split()[freq_pos]
+        word = line.split()[word_pos]
+        if word in vocabWords or not d.check(word):
+            continue
+        vocabWords[word] = int(freq)
 
     intersect = list(textWords.intersection(set(vocabWords.keys())))
     intersect_freqs = []
