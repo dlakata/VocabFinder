@@ -2,7 +2,11 @@ import string, sys, re
 from nltk.corpus import wordnet as wn
 
 book = sys.argv[1]
-wordList = sys.argv[2]    
+wordList = sys.argv[2]
+if len(sys.argv) == 4:
+    SHOW_CONTEXT = True
+else:
+    SHOW_CONTEXT = False
 
 textFile = open(book, 'r')
 vocabFile = open(wordList, 'r')
@@ -24,7 +28,7 @@ vocab.remove('')
 vocab.pop(0)
 
 sentences = re.split('\. +|! |\? |\t*', text)
-text = text.translate(string.maketrans("", ""), "!\"#$%&'()*+-,./:;<=>?@[\]^_`{|}~0123456789")
+text = text.translate(string.maketrans("", ""), string.punctuation)
 
 lower = text.lower().split()
 
@@ -33,9 +37,21 @@ textWords = set()
 for i in lower:
     textWords.add(i)
 
+def context(word):
+    if SHOW_CONTEXT:
+        print
+        for sen in sentences:
+            if word in sen.translate(string.maketrans("", ""), string.punctuation).split():
+                print "\t" + sen.strip()
+                print
+        
+    
 def vocabulary():
     for line in vocab:
-        definition = line.split('\t')[1]
+        if len(line.split('\t')) > 1:
+            definition = line.split('\t')[1]
+        else:
+            definition = wn.synsets(word)[0].definition
         word = line.split('\t')[0]
         if word in vocabWords or not wn.synsets(word):
             continue
@@ -44,11 +60,7 @@ def vocabulary():
     intersect = list(textWords.intersection(set(vocabWords.keys())))
     for word in sorted(intersect):
         print word + " - " + vocabWords.get(word)
-        print
-        for sen in sentences:
-            if word in sen.split():
-                print "\t" + sen.strip()
-                print
+        context(word)
 
 def frequencies():
     if ".num" in wordList:
@@ -76,7 +88,8 @@ def frequencies():
     for i in xrange(100):
         word = sort[length - i]
         print word + " - " + wn.synsets(word)[0].definition
-
+        context(word)
+        
 if "vocab" in sys.argv[2]:
     vocabulary()
 else:
