@@ -5,7 +5,14 @@ wordList = sys.argv[2]
 
 textFile = open(book, 'r')
 vocabFile = open(wordList, 'r')
-text = textFile.read().replace("\r\n", " ")
+orig_text = textFile.readlines()
+text = ""
+for line in orig_text:
+    if not line.strip():
+        continue
+    else:
+        text += line
+
 vocab = vocabFile.read()
 textFile.close()
 vocabFile.close()
@@ -52,6 +59,13 @@ def frequencies():
     elif "ANC" in wordList:
         for line in vocab:
             freq = line.split()[3]
+            word = line.split()[0]
+            if word in vocabWords:
+                continue
+            vocabWords[word] = freq
+    elif "en.txt" in wordList:
+        for line in vocab:
+            freq = line.split()[1]
             word = line.split()[0]
             if word in vocabWords:
                 continue
