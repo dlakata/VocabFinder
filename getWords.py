@@ -1,4 +1,5 @@
-import string, sys, re, enchant
+import string, sys, re
+from nltk.corpus import wordnet as wn
 
 book = sys.argv[1]
 wordList = sys.argv[2]    
@@ -32,13 +33,11 @@ textWords = set()
 for i in lower:
     textWords.add(i)
 
-d = enchant.Dict("en_US")
-
 def vocabulary():
     for line in vocab:
         definition = line.split('\t')[1]
         word = line.split('\t')[0]
-        if word in vocabWords or not d.check(word):
+        if word in vocabWords or not wn.synsets(word):
             continue
         vocabWords[word] = definition
 
@@ -64,7 +63,7 @@ def frequencies():
     for line in vocab:
         freq = line.split()[freq_pos]
         word = line.split()[word_pos]
-        if word in vocabWords or not d.check(word):
+        if word in vocabWords or not wn.synsets(word):
             continue
         vocabWords[word] = int(freq)
 
@@ -76,7 +75,7 @@ def frequencies():
     length = len(intersect) - 1
     for i in xrange(100):
         word = sort[length - i]
-        print word, intersect_freqs[intersect.index(word)]
+        print word + " - " + wn.synsets(word)[0].definition
 
 if "vocab" in sys.argv[2]:
     vocabulary()
