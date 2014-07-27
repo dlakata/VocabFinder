@@ -3,7 +3,7 @@ import string
 import sys
 import re
 from nltk.corpus import wordnet as wn
-
+from colorama import Fore, Back, Style
 
 class Book(object):
     """ The book to be compared against the vocabulary """
@@ -92,7 +92,7 @@ def context(word, sentences):
     for sen in sentences:
         no_punc = sen.translate(string.maketrans("", ""), string.punctuation)
         if word in no_punc.split():
-            print "\t" + sen.strip() + "\n"
+            print(Fore.GREEN + "\t" + sen.strip() + "\n")
 
 
 def printIntersect(vocab, book):
@@ -107,7 +107,7 @@ def printIntersect(vocab, book):
     intersect = list(bookWords.intersection(set(vocabWords.keys())))
     if "vocab" in vocab.list:
         for word in sorted(intersect):
-            print word + " - " + vocabWords.get(word)
+            print(Style.BRIGHT + Fore.BLUE + word + Fore.RED + " - " + vocabWords.get(word))
             if show_context:
                 context(word, sentences)
     else:
@@ -118,7 +118,7 @@ def printIntersect(vocab, book):
         length = len(intersect) - 1
         for i in xrange(100):
             word = sort[length - i]
-            print word + " - " + wn.synsets(word)[0].definition
+            print(Style.BRIGHT + Fore.RED + word + Fore.RED + " - " + wn.synsets(word)[0].definition)
             if show_context:
                 context(word, sentences)
 
@@ -131,3 +131,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+print(Style.RESET_ALL)
