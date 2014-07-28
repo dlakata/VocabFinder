@@ -3,26 +3,29 @@ import string
 import sys
 import re
 from nltk.corpus import wordnet as wn
-from colorama import Fore, Back, Style
 
 class Book(object):
     """ The book to be compared against the vocabulary """
-    def __init__(self, book):
+    def __init__(self, book, stream):
         self.book = book
+        self.stream = stream
         self.text = self.parse()
         self.words = set()
 
     def parse(self):
         """ Parses file and eliminates blank lines """
-        textFile = open(self.book, 'r')
+        if self.stream:
+            orig_text = self.book.split('\n')
+        else:
+            textFile = open(self.book, 'r')
+            orig_text = textFile.readlines()
+            textFile.close()
         text = ""
-        orig_text = textFile.readlines()
         for line in orig_text:
             if not line.strip():
                 continue
             else:
                 text += line.strip() + " "
-        textFile.close()
         return text
 
     def sentences(self):
@@ -41,16 +44,22 @@ class Book(object):
 
 class Vocab(object):
     """ The vocabulary list with which to search for words in the book """
-    def __init__(self, wordList):
+    def __init__(self, wordList, stream, filename=""):
         self.list = wordList
+        self.filename = filename
+        self.stream = stream
         self.words = {}
         self.vocab = self.parse()
 
     def parse(self):
         """ Parses the vocabulary file, and eliminates non-word lines """
-        vocabFile = open(self.list, 'r')
-        self.vocab = vocabFile.read()
-        vocabFile.close()
+        if self.stream:
+            self.vocab = self.list
+            self.list = self.filename
+        else:
+            vocabFile = open(self.list, 'r')
+            self.vocab = vocabFile.read()
+            vocabFile.close()
         self.vocab = self.vocab.split('\n')
         self.vocab.remove('')
         self.vocab.pop(0)
@@ -92,14 +101,15 @@ def context(word, sentences):
     for sen in sentences:
         no_punc = sen.translate(string.maketrans("", ""), string.punctuation)
         if word in no_punc.split():
-            print(Fore.GREEN + "\t" + sen.strip() + "\n")
+            return "\t" + sen.strip() + "\n"
 
 
-def printIntersect(vocab, book):
+def intersect(vocab, book):
     """ Displays words and definitions """
     bookWords = book.wordSet()
     vocabWords = vocab.wordDict()
     sentences = book.sentences()
+    intersection = ""
     if len(sys.argv) == 4:
         show_context = True
     else:
@@ -107,9 +117,9 @@ def printIntersect(vocab, book):
     intersect = list(bookWords.intersection(set(vocabWords.keys())))
     if "vocab" in vocab.list:
         for word in sorted(intersect):
-            print(Style.BRIGHT + Fore.BLUE + word + Fore.RED + " - " + vocabWords.get(word))
+            intersection += word + " - " + vocabWords.get(word) + "\n"
             if show_context:
-                context(word, sentences)
+                intersection += context(word, sentences)
     else:
         freqs = []
         for word in intersect:
@@ -118,18 +128,17 @@ def printIntersect(vocab, book):
         length = len(intersect) - 1
         for i in xrange(100):
             word = sort[length - i]
-            print(Style.BRIGHT + Fore.RED + word + Fore.RED + " - " + wn.synsets(word)[0].definition)
+            intersection += word + " - " + wn.synsets(word)[0].definition + "\n"
             if show_context:
-                context(word, sentences)
+                intersection += context(word, sentences)
+    return intersection
 
 
 def main():
     """ Main function """
-    book = Book(sys.argv[1])
-    vocab = Vocab(sys.argv[2])
-    printIntersect(vocab, book)
+    book = Book(sys.argv[1], False)
+    vocab = Vocab(sys.argv[2], False)
+    print intersect(vocab, book)
 
 if __name__ == "__main__":
     main()
-
-print(Style.RESET_ALL)
