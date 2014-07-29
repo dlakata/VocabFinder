@@ -29,6 +29,7 @@ class Book(object):
             textFile = open(self.book, 'r')
             orig_text = textFile.read()
             textFile.close()
+        orig_text = ' '.join(orig_text.splitlines())
         text = unicode(orig_text, 'utf-8')
         return text
 
@@ -97,10 +98,9 @@ class Vocab(object):
 def context(word, sentences):
     """ Displays sentences in which the words occur in the text """
     for sen in sentences:
-        no_punc = sen.translate({ord(c): None for c in string.punctuation})
-        if word in no_punc.lower().split():
-            return sen.strip() + "\n"
-    return ""
+        if word in sen.lower().split():
+            return sentences.index(sen)
+    return 0
 
 
 def intersect(vocab, book):
@@ -108,13 +108,14 @@ def intersect(vocab, book):
     bookWords = book.wordSet()
     vocabWords = vocab.wordDict()
     sentences = book.sentences()
+    fixSentences = [s.translate({ord(c): None for c in string.punctuation}) for s in sentences]
     intersection = ""
     showContext = ""
     intersect = list(bookWords.intersection(set(vocabWords.keys())))
     if "vocab" in vocab.list:
         for word in sorted(intersect):
             intersection += word + " - " + vocabWords.get(word) + "\n"
-            showContext += context(word, sentences)
+            showContext += sentences[context(word, fixSentences)] + "\n"
     else:
         freqs = []
         not_found = []
@@ -130,17 +131,17 @@ def intersect(vocab, book):
         while i < 100 and i < len(sortNotFound):
             word = sortNotFound[i]
             intersection += word + " - " + wn.synsets(word)[0].definition + "\n"
-            showContext += context(word, sentences)
+            showContext += sentences[context(word, fixSentences)] + "\n"
             i += 1
         j = 0
         while i < 100 and i < len(sortIntersect):
             word = sortIntersect[length - j]
             intersection += word + " - " + wn.synsets(word)[0].definition + "\n"
-            showContext += context(word, sentences)
+            showContext += sentences[context(word, fixSentences)] + "\n"
             i += 1
             j += 1
-        #sortContext = [x for (y, x) in sorted(zip(intersection.split('\n'), showContext.split('\n')))]
-    return '\n'.join(sorted(intersection.split('\n'))), #'\n'.join(sortContext)
+        sortContext = [x for (y, x) in sorted(zip(intersection.split('\n'), showContext.split('\n')))]
+    return '\n'.join(sorted(intersection.split('\n'))), '\n'.join(sortContext)
 
 
 def main():
