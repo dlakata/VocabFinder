@@ -1,6 +1,6 @@
 {% extends 'layout.html' %}
 {% block body %}
-   <body>
+    <body>
         <div class="content">
             <h1>Vocab Finder</h1>
             <p>Want to find obscure or difficult words in an article or book?</p>
@@ -12,30 +12,10 @@
             from lists of English-language word frequency to a list of words chosen by author David
             Foster Wallace.<br> Alternatively, you can upload your own vocabulary list. Definitions
             will be found for all legitimate words.
-            <div class="btn-group dropup">
-                <button type="button" class="btn btn-default">Vocabulary file (.txt)</button>
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                <span class="caret"></span>
-                <span class="sr-only">Toggle Dropdown</span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a href="#">American frequency list (~100,000 words)</a></li>
-                    <li><a href="#">Movie subtitles freq. list (~80,000 words)</a></li>
-                    <li><a href="#">British frequency list (~75,000 words)</a></li>
-                    <li><a href="#">More subtitles freq. list (~60,000 words)</a></li>
-                    <li><a href="#">Barron's GRE words (800 words)</a></li>
-                    <li><a href="#">David Foster Wallace's words (360 words)</a></li>
-                    <li class="divider"></li>
-                    <li></li>
-                </ul>
-            </div>
             <form enctype="multipart/form-data" action="/" method="POST">
-            <input type="file" name="book" title="Text file (.txt)" data-filename-placement="inside">
-            <input type="file" name="vocab" title="Upload file" data-filename-placement="inside">
-            <div class="checkbox">
-                <input type="checkbox"><label>Show context in text?</label>
-            </div>
-            <button type="submit" class="btn btn-default">Analyze text</button>
+                <input type="file" name="book" title="Text file (.txt)" data-filename-placement="inside">
+                <input type="file" name="vocab" title="Upload file (.txt)" data-filename-placement="inside">
+                <button type="submit" class="btn btn-default">Analyze text</button>
             </form>
         </div>
 {% endblock %}

@@ -65,7 +65,6 @@ class Vocab(object):
             vocabFile.close()
         self.vocab = self.vocab.split('\n')
         self.vocab.remove('')
-        self.vocab.pop(0)
         return self.vocab
 
     def wordDict(self):

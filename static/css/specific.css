@@ -13,6 +13,10 @@ p {
 	color: #C2C2C2;
 }
 
+th {
+	text-align: center;
+}
+
 h1 {
 	font-size: 100px;
 	color: #FFFFFF;
@@ -26,6 +30,19 @@ h1 {
 	color: #C2C2C2;
 }
 
+button {
+	border: none;
+	background: none;
+}
+button[type="submit"] {
+	border: none;
+	background-color: 9FFF80;
+}
+
+li > input {
+	font-size: 10px;
+}
+
 .btn-default {
 	font-size: 30px;
 }
@@ -37,4 +54,12 @@ h1 {
 	-webkit-box-shadow: 0 0px 10px 10px rgba(0, 0, 0, 0.9);
 	-moz-box-shadow: 0 0px 10px 10px rgba(0, 0, 0, 0.9);
 	box-shadow: 0 0px 50px 50px rgba(0, 0, 0, 0.9);
+}
+
+.scroll {
+	height: 400px;
+	margin: 30px auto;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	color: #C2C2C2;
 }
