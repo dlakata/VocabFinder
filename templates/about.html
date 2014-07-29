@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+{% block body %}
+    <h2>How does it work?</h2>
+    <p>Frequency and vocabulary lists are in the form of:<br>
+    [word]  [definition OR frequency]<br>
+    [word]  [definition OR frequency]<br>
+    ...<br></p>
+    <p>When given a frequency list, Vocab Finder returns all the words of the text
+    that did not occur in the list, as well as the lowest-frequency words that occurred,
+    for a total of 100 words.
+{% endblock %}
