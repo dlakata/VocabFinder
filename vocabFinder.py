@@ -26,9 +26,11 @@ def getData():
             vocab = getWords.Vocab(words, True, fVocab.filename)
         text = fBook.stream.read()
         book = getWords.Book(text, True)
-        intersection = getWords.intersect(vocab, book)
+        intersection, context = getWords.intersect(vocab, book)
+        context = context.split('\n')
+        context.pop(0)
         words, defs = make_html(intersection)
-        return render_template("results.html", zip=zip(words, defs))
+        return render_template("results.html", zip=zip(words, defs, context, range(len(words))))
 
 def make_html(intersection):
     words = []

@@ -95,8 +95,9 @@ def context(word, sentences):
     """ Displays sentences in which the words occur in the text """
     for sen in sentences:
         no_punc = sen.translate(string.maketrans("", ""), string.punctuation)
-        if word in no_punc.split():
-            return "\t" + sen.strip() + "\n"
+        if word in no_punc.lower().split():
+            return sen.strip() + "\n"
+    return ""
 
 
 def intersect(vocab, book):
@@ -105,16 +106,12 @@ def intersect(vocab, book):
     vocabWords = vocab.wordDict()
     sentences = book.sentences()
     intersection = ""
-    if len(sys.argv) == 4:
-        show_context = True
-    else:
-        show_context = False
+    showContext = ""
     intersect = list(bookWords.intersection(set(vocabWords.keys())))
     if "vocab" in vocab.list:
         for word in sorted(intersect):
             intersection += word + " - " + vocabWords.get(word) + "\n"
-            if show_context:
-                intersection += context(word, sentences)
+            showContext += context(word, sentences)
     else:
         freqs = []
         not_found = []
@@ -130,18 +127,18 @@ def intersect(vocab, book):
         while i < 100 and i < len(sortNotFound):
             word = sortNotFound[i]
             intersection += word + " - " + wn.synsets(word)[0].definition + "\n"
-            if show_context:
-                intersection += context(word, sentences)
+            showContext += context(word, sentences)
             i += 1
         j = 0
         while i < 100 and i < len(sortIntersect):
             word = sortIntersect[length - j]
             intersection += word + " - " + wn.synsets(word)[0].definition + "\n"
-            if show_context:
-                intersection += context(word, sentences)
+            showContext += context(word, sentences)
             i += 1
             j += 1
-    return '\n'.join(sorted(intersection.split('\n')))
+        sortContext = [x for (y, x) in sorted(zip(intersection.split('\n'), showContext.split('\n')))]
+        print sortContext
+    return '\n'.join(sorted(intersection.split('\n'))), '\n'.join(sortContext)
 
 
 def main():

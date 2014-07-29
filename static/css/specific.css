@@ -44,6 +44,10 @@ button[type="submit"] {
 	background-color: 9FFF80;
 }
 
+.collapsing {
+	-webkit-transition:height .01s ease;
+	transition:height .01s ease;
+}
 
 form > div > p {
 	margin-top: 10px;

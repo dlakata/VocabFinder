@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 {% block body %}
     <h2>The Words</h2>
+    <p>Click on a word's row to see its context in the text.</p>
     <div class="scroll">
         <table class="table table-condensed table-responsive">
             <thead>
@@ -10,10 +11,14 @@
                 </tr>
             </thead>
             <tbody>
-                {% for word, def in zip %}
-                <tr>
+                {% for word, def, context, i in zip %}
+                <tr class="clickable" data-toggle="collapse" id="{{i}}" data-target=".{{i}}collapsed">
                     <td> {{ word }} </td>
                     <td> {{ def }} </td>
+                </tr>
+                <tr class="collapse out {{i}}collapsed">
+                    <td></td>
+                    <td> <b>{{ context }}</b> </td>
                 </tr>
                 {% endfor %}
             </tbody>
