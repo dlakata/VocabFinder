@@ -26,22 +26,16 @@ h1 {
 	margin: 0 auto;
 }
 
-.checkbox {
-	color: #C2C2C2;
+h1 > a, h1>a:hover {
+	text-decoration: none;
+	color: #FFFFFF;
 }
 
-button {
-	border: none;
-	background: none;
-}
 button[type="submit"] {
 	border: none;
 	background-color: 9FFF80;
 }
 
-li > input {
-	font-size: 10px;
-}
 
 .btn-default {
 	font-size: 30px;

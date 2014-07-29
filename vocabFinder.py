@@ -9,22 +9,20 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
-@app.route('/results.html')
-def results():
-    return render_template("results.html", zip="")
-
 @app.route('/', methods=['POST'])
 def getData():
     if request.method == 'POST':
         fBook = request.files['book']
         fVocab = request.files['vocab']
-        print fVocab, fBook
+        if not fVocab:
+            words = 'wordLists/freq_all.num'
+            vocab = getWords.Vocab(words, False)
+        else:
+            words = fVocab.stream.read()
+            vocab = getWords.Vocab(words, True, fVocab.filename)
         text = fBook.stream.read()
-        words = fVocab.stream.read()
         book = getWords.Book(text, True)
-        vocab = getWords.Vocab(words, True, fVocab.filename)
         intersection = getWords.intersect(vocab, book)
-        print intersection
         words, defs = make_html(intersection)
         return render_template("results.html", zip=zip(words, defs))
 

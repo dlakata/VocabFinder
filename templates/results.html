@@ -1,26 +1,22 @@
 {% extends 'layout.html' %}
 {% block body %}
-    <body>
-        <div class="content">
-            <h1>Vocab Finder</h1>
-            <p class="lead">The Words</p>
-            <div class="scroll">
-                <table class="table table-condensed table-responsive">
-                    <thead>
-                        <tr>
-                            <th class="col-md-4">Word</th>
-                            <th class="col-md-8">Definition</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for word, def in zip %}
-                        <tr>
-                            <td> {{ word }} </td>
-                            <td> {{ def }} </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <p>The Words</p>
+    <div class="scroll">
+        <table class="table table-condensed table-responsive">
+            <thead>
+                <tr>
+                    <th class="col-md-4">Word</th>
+                    <th class="col-md-8">Definition</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for word, def in zip %}
+                <tr>
+                    <td> {{ word }} </td>
+                    <td> {{ def }} </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
