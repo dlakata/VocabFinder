@@ -6,11 +6,15 @@ import getWords
 app = Flask(__name__)
 
 @app.route('/')
-def my_form():
+def index():
     return render_template("index.html")
 
+@app.route('/results.html')
+def results():
+    return render_template("results.html", results="")
+
 @app.route('/', methods=['POST'])
-def my_form_post():
+def getData():
     if request.method == 'POST':
         fBook = request.files['book']
         fVocab = request.files['vocab']

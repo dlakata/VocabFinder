@@ -38,7 +38,10 @@ class Book(object):
         clean = self.text.translate(to_clean, string.punctuation)
         clean = clean.lower().split()
         for word in clean:
-            self.words.add(word)
+            if any(ch.isdigit() for ch in word):
+                continue
+            else:
+                self.words.add(word)
         return self.words
 
 
@@ -78,19 +81,12 @@ class Vocab(object):
                     continue
                 self.words[word] = definition
         else:
-            if ".num" in self.list:
-                freq_pos = 0
-                word_pos = 1
-            elif "ANC" in self.list:
-                freq_pos = 3
-                word_pos = 0
-            elif "en.txt" or "subtitles" in self.list:
-                freq_pos = 1
-                word_pos = 0
+            freq_pos = 1
+            word_pos = 0
             for line in self.vocab:
                 freq = line.split()[freq_pos]
                 word = line.split()[word_pos]
-                if word in self.words or not wn.synsets(word):
+                if word in self.words:
                     continue
                 self.words[word] = int(freq)
         return self.words
@@ -122,16 +118,31 @@ def intersect(vocab, book):
                 intersection += context(word, sentences)
     else:
         freqs = []
-        for word in intersect:
-            freqs.append(vocabWords.get(word))
-        sort = [x for (y, x) in sorted(zip(freqs, intersect), reverse=True)]
+        not_found = []
+        for word in bookWords:
+            if wn.synsets(word) and word not in vocabWords and word not in not_found:
+                not_found.append(word)
+            else:
+                freqs.append(vocabWords.get(word))
+        sortIntersect = [x for (y, x) in sorted(zip(freqs, intersect), reverse=True)]
         length = len(intersect) - 1
-        for i in xrange(100):
-            word = sort[length - i]
+        sortNotFound = sorted(not_found)
+        i = 0
+        while i < 100 and i < len(sortNotFound):
+            word = sortNotFound[i]
             intersection += word + " - " + wn.synsets(word)[0].definition + "\n"
             if show_context:
                 intersection += context(word, sentences)
-    return intersection
+            i += 1
+        j = 0
+        while i < 100 and i < len(sortIntersect):
+            word = sortIntersect[length - j]
+            intersection += word + " - " + wn.synsets(word)[0].definition + "\n"
+            if show_context:
+                intersection += context(word, sentences)
+            i += 1
+            j += 1
+    return '\n'.join(sorted(intersection.split('\n')))
 
 
 def main():

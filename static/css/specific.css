@@ -1,0 +1,40 @@
+body {
+	text-align: center;
+	font-family: 'Overlock', cursive;
+	background-image: url('../img/dictionary.jpg');
+	background-size: cover;
+	background-attachment:fixed;
+	background-clip:content-box;
+	height: 100%;
+}
+
+p {
+	font-size: 30px;
+	color: #C2C2C2;
+}
+
+h1 {
+	font-size: 100px;
+	color: #FFFFFF;
+}
+
+.input {
+	margin: 0 auto;
+}
+
+.checkbox {
+	color: #C2C2C2;
+}
+
+.btn-default {
+	font-size: 30px;
+}
+
+.content {
+	background: rgba(0,0,0,0.9);
+	width: 70%;
+	margin: 0 auto;
+	-webkit-box-shadow: 0 0px 10px 10px rgba(0, 0, 0, 0.9);
+	-moz-box-shadow: 0 0px 10px 10px rgba(0, 0, 0, 0.9);
+	box-shadow: 0 0px 50px 50px rgba(0, 0, 0, 0.9);
+}
