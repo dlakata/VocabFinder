@@ -41,13 +41,21 @@ h1 > a, h1>a:hover {
 }
 
 button[type="submit"] {
-	border: none;
 	background-color: 9FFF80;
 }
 
 
-.btn-default {
-	font-size: 30px;
+form > div > p {
+	margin-top: 10px;
+	font-size: 14px;
+}
+
+.btn-lg {
+	font-size:30px;
+}
+
+.btn-sm {
+	font-size:16px;
 }
 
 .content {

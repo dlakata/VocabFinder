@@ -10,8 +10,11 @@
     approximately 100,000 English words, as sorted by frequency of usage in the <a
     href="//www.natcorp.ox.ac.uk/"target="blank" >British National Corpus</a>.</p>
     <form enctype="multipart/form-data" action="/" method="POST">
-        <input type="file" name="book" title="Text file (.txt)" data-filename-placement="inside">
-        <input type="file" name="vocab" title="Upload file (.txt)" data-filename-placement="inside">
-        <button type="submit" class="btn btn-default">Analyze text</button>
+        <input type="file" class="btn btn-default btn-lg"name="book" title="Text file (.txt)" data-filename-placement="inside">
+        <button type="submit" class="btn btn-success btn-lg">Analyze text</button>
+        <div name="optional">
+        <p>Upload your own vocabulary file (optional):<p>
+        <input type="file" class="btn btn-default btn-sm" name="vocab" title="Vocabulary (.txt)" data-filename-placement="inside">
+        </div>
     </form>
 {% endblock %}
