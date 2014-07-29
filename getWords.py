@@ -1,8 +1,17 @@
 """ Finds words common to vocabulary list and text """
 import string
+import cgi
 import sys
 import re
 from nltk.corpus import wordnet as wn
+
+def clean(string):
+    try:
+        return unicode(string, "ascii")
+    except UnicodeError:
+        return unicode(string, "utf-8")
+    else:
+        return unicode(string, "utf-8")
 
 class Book(object):
     """ The book to be compared against the vocabulary """
@@ -25,7 +34,7 @@ class Book(object):
             if not line.strip():
                 continue
             else:
-                text += line.strip() + " "
+                text += clean(line) + " "
         return text
 
     def sentences(self):
@@ -34,8 +43,7 @@ class Book(object):
 
     def wordSet(self):
         """ Returns a set of all words in the text """
-        to_clean = string.maketrans("", "")
-        clean = self.text.translate(to_clean, string.punctuation)
+        clean = self.text.translate({ord(c): None for c in string.punctuation})
         clean = clean.lower().split()
         for word in clean:
             if any(ch.isdigit() for ch in word):
@@ -94,7 +102,7 @@ class Vocab(object):
 def context(word, sentences):
     """ Displays sentences in which the words occur in the text """
     for sen in sentences:
-        no_punc = sen.translate(string.maketrans("", ""), string.punctuation)
+        no_punc = sen.translate({ord(c): None for c in string.punctuation})
         if word in no_punc.lower().split():
             return sen.strip() + "\n"
     return ""
@@ -137,7 +145,6 @@ def intersect(vocab, book):
             i += 1
             j += 1
         sortContext = [x for (y, x) in sorted(zip(intersection.split('\n'), showContext.split('\n')))]
-        print sortContext
     return '\n'.join(sorted(intersection.split('\n'))), '\n'.join(sortContext)
 
 
@@ -145,7 +152,7 @@ def main():
     """ Main function """
     book = Book(sys.argv[1], False)
     vocab = Vocab(sys.argv[2], False)
-    print intersect(vocab, book)
+    print intersect(vocab, book)[0]
 
 if __name__ == "__main__":
     main()
