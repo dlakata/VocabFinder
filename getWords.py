@@ -24,17 +24,12 @@ class Book(object):
     def parse(self):
         """ Parses file and eliminates blank lines """
         if self.stream:
-            orig_text = self.book.split('\n')
+            orig_text = self.book
         else:
             textFile = open(self.book, 'r')
-            orig_text = textFile.readlines()
+            orig_text = textFile.read()
             textFile.close()
-        text = ""
-        for line in orig_text:
-            if not line.strip():
-                continue
-            else:
-                text += clean(line) + " "
+        text = unicode(orig_text, 'utf-8')
         return text
 
     def sentences(self):
@@ -144,8 +139,8 @@ def intersect(vocab, book):
             showContext += context(word, sentences)
             i += 1
             j += 1
-        sortContext = [x for (y, x) in sorted(zip(intersection.split('\n'), showContext.split('\n')))]
-    return '\n'.join(sorted(intersection.split('\n'))), '\n'.join(sortContext)
+        #sortContext = [x for (y, x) in sorted(zip(intersection.split('\n'), showContext.split('\n')))]
+    return '\n'.join(sorted(intersection.split('\n'))), #'\n'.join(sortContext)
 
 
 def main():
