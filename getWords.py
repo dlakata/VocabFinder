@@ -1,17 +1,8 @@
 """ Finds words common to vocabulary list and text """
 import string
-import cgi
 import sys
 import re
 from nltk.corpus import wordnet as wn
-
-def clean(string):
-    try:
-        return unicode(string, "ascii")
-    except UnicodeError:
-        return unicode(string, "utf-8")
-    else:
-        return unicode(string, "utf-8")
 
 class Book(object):
     """ The book to be compared against the vocabulary """
@@ -19,19 +10,18 @@ class Book(object):
         self.book = book
         self.stream = stream
         self.text = self.parse()
-        self.words = set()
+        self.words = dict()
 
     def parse(self):
         """ Parses file and eliminates blank lines """
         if self.stream:
-            orig_text = self.book
+            orig_text = unicode(self.book, 'utf-8')
         else:
             textFile = open(self.book, 'r')
-            orig_text = textFile.read()
+            orig_text = unicode(textFile.read(), 'utf-8')
             textFile.close()
-        orig_text = ' '.join(orig_text.splitlines())
-        text = unicode(orig_text, 'utf-8')
-        return text
+        orig_text = orig_text.translate({ord(c): None for c in "\n"})
+        return orig_text
 
     def sentences(self):
         """ Returns the text broken up into sentences """
@@ -39,13 +29,15 @@ class Book(object):
 
     def wordSet(self):
         """ Returns a set of all words in the text """
-        clean = self.text.translate({ord(c): None for c in string.punctuation})
-        clean = clean.lower().split()
-        for word in clean:
-            if any(ch.isdigit() for ch in word):
-                continue
-            else:
-                self.words.add(word)
+        sentences = self.sentences()
+        for sen in sentences:
+            clean = sen.translate({ord(c): None for c in string.punctuation})
+            clean = clean.lower().split()
+            for word in clean:
+                if any(ch.isdigit() for ch in word):
+                    continue
+                else:
+                    self.words[word] = sen
         return self.words
 
 
@@ -95,14 +87,6 @@ class Vocab(object):
         return self.words
 
 
-def context(word, sentences):
-    """ Displays sentences in which the words occur in the text """
-    for sen in sentences:
-        if word in sen.lower().split():
-            return sentences.index(sen)
-    return 0
-
-
 def intersect(vocab, book):
     """ Displays words and definitions """
     bookWords = book.wordSet()
@@ -111,33 +95,44 @@ def intersect(vocab, book):
     fixSentences = [s.translate({ord(c): None for c in string.punctuation}) for s in sentences]
     intersection = ""
     showContext = ""
-    intersect = list(bookWords.intersection(set(vocabWords.keys())))
+    intersect = list(set(bookWords.keys()).intersection(set(vocabWords.keys())))
     if "vocab" in vocab.list:
         for word in sorted(intersect):
             intersection += word + " - " + vocabWords.get(word) + "\n"
-            showContext += sentences[context(word, fixSentences)] + "\n"
+            showContext += bookWords.get(word) + "\n"
     else:
-        freqs = []
-        not_found = []
+        frWords = []
+        frDefs = []
+        frFreqs = []
+        nfWords = []
+        nfDefs = []
         for word in bookWords:
-            if wn.synsets(word) and word not in vocabWords and word not in not_found:
-                not_found.append(word)
-            else:
-                freqs.append(vocabWords.get(word))
-        sortIntersect = [x for (y, x) in sorted(zip(freqs, intersect), reverse=True)]
-        length = len(intersect) - 1
-        sortNotFound = sorted(not_found)
+            synset = wn.synsets(word)
+            if synset and word not in vocabWords and synset[0].definition not in nfDefs:
+                nfWords.append(word)
+                nfDefs.append(synset[0].definition)
+            elif synset and synset[0].definition not in nfDefs:
+                frWords.append(word)
+                frDefs.append(synset[0].definition)
+                frFreqs.append(vocabWords.get(word))
+        nfSort = sorted(zip(nfWords, nfDefs))
+        nfWords = [x for (x, y) in nfSort]
+        nfDefs = [y for (x, y) in nfSort]
+        frSort = sorted(zip(frFreqs, frWords, frDefs), reverse=True)
+        frWords = [y for (x, y, z) in frSort]
+        frDefs = [z for (x, y, z) in frSort]
+        length = len(frWords) - 1
         i = 0
-        while i < 100 and i < len(sortNotFound):
-            word = sortNotFound[i]
-            intersection += word + " - " + wn.synsets(word)[0].definition + "\n"
-            showContext += sentences[context(word, fixSentences)] + "\n"
+        while i < 100 and i < len(nfSort):
+            word = nfWords[i]
+            intersection += word + " - " + nfDefs[i] + "\n"
+            showContext += bookWords.get(word) + "\n"
             i += 1
         j = 0
-        while i < 100 and i < len(sortIntersect):
-            word = sortIntersect[length - j]
-            intersection += word + " - " + wn.synsets(word)[0].definition + "\n"
-            showContext += sentences[context(word, fixSentences)] + "\n"
+        while i < 100 and i < len(frSort):
+            word = frWords[length - j]
+            intersection += word + " - " + frDefs[i] + "\n"
+            showContext += bookWords.get(word) + "\n"
             i += 1
             j += 1
         sortContext = [x for (y, x) in sorted(zip(intersection.split('\n'), showContext.split('\n')))]
