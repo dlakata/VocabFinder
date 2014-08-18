@@ -3,6 +3,7 @@ import string
 import sys
 import re
 from nltk.corpus import wordnet as wn
+from nltk.stem import WordNetLemmatizer
 
 class Book(object):
     """ The book to be compared against the vocabulary """
@@ -29,6 +30,7 @@ class Book(object):
 
     def wordSet(self):
         """ Returns a set of all words in the text """
+        WNL = WordNetLemmatizer()
         sentences = self.sentences()
         for sen in sentences:
             clean = sen.translate({ord(c): None for c in string.punctuation})
@@ -37,7 +39,7 @@ class Book(object):
                 if any(ch.isdigit() for ch in word):
                     continue
                 else:
-                    self.words[word] = sen
+                    self.words[WNL.lemmatize(word)] = sen
         return self.words
 
 
