@@ -30,7 +30,7 @@ class Book(object):
 
     def wordSet(self):
         """ Returns a set of all words in the text """
-        WNL = WordNetLemmatizer()
+        wnl = WordNetLemmatizer()
         sentences = self.sentences()
         for sen in sentences:
             clean = sen.translate({ord(c): None for c in string.punctuation})
@@ -39,7 +39,7 @@ class Book(object):
                 if any(ch.isdigit() for ch in word):
                     continue
                 else:
-                    self.words[WNL.lemmatize(word)] = sen
+                    self.words[wnl.lemmatize(word)] = sen
         return self.words
 
 
@@ -93,12 +93,10 @@ def intersect(vocab, book):
     """ Displays words and definitions """
     bookWords = book.wordSet()
     vocabWords = vocab.wordDict()
-    sentences = book.sentences()
-    fixSentences = [s.translate({ord(c): None for c in string.punctuation}) for s in sentences]
     intersection = ""
     showContext = ""
     intersect = list(set(bookWords.keys()).intersection(set(vocabWords.keys())))
-    if "vocab" in vocab.list:
+    if "vocab" in vocab.filename:
         for word in sorted(intersect):
             intersection += word + " - " + vocabWords.get(word) + "\n"
             showContext += bookWords.get(word) + "\n"
@@ -137,7 +135,7 @@ def intersect(vocab, book):
             showContext += bookWords.get(word) + "\n"
             i += 1
             j += 1
-        sortContext = [x for (y, x) in sorted(zip(intersection.split('\n'), showContext.split('\n')))]
+    sortContext = [x for (y, x) in sorted(zip(intersection.split('\n'), showContext.split('\n')))]
     return '\n'.join(sorted(intersection.split('\n'))), '\n'.join(sortContext)
 
 
