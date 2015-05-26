@@ -139,7 +139,15 @@ def intersect(vocab, book):
     return '\n'.join(sorted(intersection.split('\n'))), '\n'.join(sortContext)
 
 def getDefinition(synset):
-    defs = [syn.definition for syn in synset]
+    """ Concatenate word's definitions """
+    pos_defs = [(syn.pos, syn.definition) for syn in synset]
+    defs = []
+    for p, d in pos_defs:
+        if p == 's' or p == 'a':
+            p = 'adj'
+        elif p == 'r':
+            p = 'adv'
+        defs.append('({0}) {1}'.format(p, d))
     return '; '.join(defs)
 
 def main():
