@@ -107,12 +107,13 @@ def intersect(vocab, book):
         nfDefs = []
         for word in bookWords:
             synset = wn.synsets(word)
-            if synset and word not in vocabWords and synset[0].definition not in nfDefs:
+            definition = getDefinition(synset)
+            if synset and word not in vocabWords and definition not in nfDefs:
                 nfWords.append(word)
-                nfDefs.append(synset[0].definition)
-            elif synset and synset[0].definition not in nfDefs:
+                nfDefs.append(definition)
+            elif synset and definition not in nfDefs:
                 frWords.append(word)
-                frDefs.append(synset[0].definition)
+                frDefs.append(definition)
                 frFreqs.append(vocabWords.get(word))
         nfSort = sorted(zip(nfWords, nfDefs))
         nfWords = [x for (x, y) in nfSort]
@@ -137,6 +138,9 @@ def intersect(vocab, book):
     sortContext = [x for (y, x) in sorted(zip(intersection.split('\n'), showContext.split('\n')))]
     return '\n'.join(sorted(intersection.split('\n'))), '\n'.join(sortContext)
 
+def getDefinition(synset):
+    defs = [syn.definition for syn in synset]
+    return '; '.join(defs)
 
 def main():
     """ Main function """
