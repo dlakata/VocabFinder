@@ -21,7 +21,6 @@ class Book(object):
             textFile = open(self.book, 'r')
             orig_text = unicode(textFile.read(), 'utf-8')
             textFile.close()
-        orig_text = orig_text.translate({ord(c): None for c in "\n"})
         return orig_text
 
     def sentences(self):
@@ -131,7 +130,7 @@ def intersect(vocab, book):
         j = 0
         while i < 100 and i < len(frSort):
             word = frWords[length - j]
-            intersection += word + " - " + frDefs[i] + "\n"
+            intersection += word + " - " + frDefs[length - j] + "\n"
             showContext += bookWords.get(word) + "\n"
             i += 1
             j += 1
