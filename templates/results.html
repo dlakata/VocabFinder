@@ -11,14 +11,10 @@
                 </tr>
             </thead>
             <tbody>
-                {% for word, def, context, i in zip %}
-                <tr class="clickable" data-toggle="collapse" id="{{i}}" data-target=".{{i}}collapsed">
+                {% for word, def in zip %}
+                <tr>
                     <td> {{ word }} </td>
                     <td> {{ def }} </td>
-                </tr>
-                <tr class="collapse out {{i}}collapsed">
-                    <td></td>
-                    <td> <b>{{ context }}</b> </td>
                 </tr>
                 {% endfor %}
             </tbody>
