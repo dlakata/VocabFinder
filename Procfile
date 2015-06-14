@@ -1,1 +1,1 @@
-web: gunicorn vocabFinder:app --log-file=-
+web: gunicorn vocab_finder:app --log-file=-
