@@ -1,20 +1,15 @@
 {% extends 'layout.html' %}
 {% block body %}
     <p>Want to find obscure or difficult words in an article or book?</p>
-    <p>Find the writing in a .txt file. Literature in the public domain can be
+    <p>Find the writing in a .txt file, or simply find a URL for the writing. Literature in the public domain can be
     obtained easily via <a target="blank" href="//archive.org/">The Internet Archive</a> or
     <a target="blank" href="//www.gutenberg.org/">Project Gutenberg</a>.</p>
-    <p>To find obscure words, you can upload your own vocabulary or frequency list. Definitions
-    will be found for all legitimate words, if your list doesn't provide them.</p>
-    <p>If you don't provide a vocabulary list, the text will be compared against
-    approximately 100,000 English words, as sorted by frequency of usage in the <a
-    href="//www.natcorp.ox.ac.uk/"target="blank" >British National Corpus</a>.</p>
+    <p>The text will be compared against approximately 100,000 English words,
+    as defined by the <a href="http://gcide.gnu.org.ua/">GNU Collaborative International Dictionary of English</a>,
+    and sorted by frequency of usage by the <a href="http://corpus.byu.edu/coha/">Corpus of Historical American English</a>.
     <form enctype="multipart/form-data" action="/" method="POST">
+        URL: <input type="url" name="website"><br><br>
         <input type="file" class="btn btn-default btn-lg"name="book" title="Text file (.txt)" data-filename-placement="inside">
         <button type="submit" class="btn btn-success btn-lg">Analyze text</button>
-        <div name="optional">
-        <p>Upload your own vocabulary file (optional):<br>Include "freq" or "vocab" in filename</p>
-        <input type="file" class="btn btn-default btn-sm" name="vocab" title="Vocabulary (.txt)" data-filename-placement="inside">
-        </div>
     </form>
 {% endblock %}

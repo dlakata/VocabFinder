@@ -2,8 +2,7 @@ from flask import Flask, request, render_template
 from process_words import *
 
 app = Flask(__name__)
-lemma = prep_wordnet()
-dictionary = create_dictionary()
+analyzer = TextAnalyzer()
 
 @app.route('/')
 def index():
@@ -16,9 +15,14 @@ def about():
 @app.route('/', methods=['POST'])
 def getData():
     if request.method == 'POST':
-        book = request.files['book'].stream.read()
-        words = process_book(lemma, dictionary, book)[:100]
-        defs = [dictionary[word][1] for word in words]
+        bookInput = request.files['book']
+        websiteInput = request.form['website']
+        if bookInput:
+            book = bookInput.stream.read()
+            words = analyzer.find_words(book)[:100]
+        else:
+            words = analyzer.find_website_words(websiteInput)[:100]
+        defs = [analyzer.dictionary[word][1] for word in words]
         return render_template("results.html", zip=zip(words, defs))
 
 if __name__ == '__main__':

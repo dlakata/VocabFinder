@@ -1,12 +1,41 @@
 """ Finds words common to vocabulary list and text """
-import string, sys, re
+import sys, urllib2, unicodedata
+from datetime import datetime
 from nltk.corpus import wordnet
 from nltk.stem import WordNetLemmatizer
+from bs4 import BeautifulSoup
+
+class TextAnalyzer(object):
+
+    def __init__(self):
+        self.lemmatize = prep_wordnet()
+        self.dictionary = create_dictionary()
+        self.valid_words = set(self.dictionary.keys())
+        self.trans_table = dict.fromkeys((i for i in xrange(sys.maxunicode) if not unicodedata.category(unichr(i)).startswith('L')), u' ')
+
+    def find_words(self, text):
+        clean_text = text.decode('utf-8').translate(self.trans_table)
+        words = { word.strip().lower() for word in clean_text.split(' ') }
+        lemmatized_words = map(self.lemmatize, words)
+        found = self.valid_words & set(lemmatized_words)
+        return sorted(found, key=lambda word: self.dictionary[word][0])
+
+    def find_website_words(self, website):
+        response = urllib2.urlopen(website)
+        html = response.read()
+        response.close()
+        text = BeautifulSoup(html).get_text()
+        return self.find_words(text.encode('utf-8'))
+
+    def print_words(self, found, number):
+        for i in xrange(number):
+            word = found[i]
+            print word, self.dictionary[word][1]
 
 def prep_wordnet():
     lemma = WordNetLemmatizer()
     wordnet.synsets(lemma.lemmatize('hello'))
-    return lemma
+    return lemma.lemmatize
 
 def create_dictionary():
     dictionary = dict()
@@ -18,34 +47,15 @@ def create_dictionary():
         dictionary[word] = int(freq), dfn
     return dictionary
 
-def find_words(lemma, text_words, dictionary):
-    found = set()
-    for word in text_words:
-        lookup = lemma.lemmatize(word)
-        if lookup in dictionary:
-            found.add(lookup)
-    return sorted(found, key=lambda word: dictionary[word][0])
-
-def process_book(lemma, dictionary, text):
-    digits = re.compile('\d')
-    text = text.translate(string.maketrans("",""), string.punctuation).decode('utf-8')
-    text_words = set([word.strip().lower() for word in text.split(' ') if not bool(digits.search(word))])
-    return find_words(lemma, text_words, dictionary)
-
-def print_words(found, dictionary, number):
-    for i in xrange(number):
-        word = found[i]
-        print word, dictionary[word][1]
-
 def main():
     """ Main function """
     book_file = open(sys.argv[1], 'r')
     book = book_file.read()
     book_file.close()
-    lemma = prep_wordnet()
-    dictionary = create_dictionary()
-    found = process_book(lemma, dictionary, book)
-    print_words(found, dictionary, 10)
+    analyzer = TextAnalyzer()
+    a = datetime.now()
+    found = analyzer.find_words(book)
+    print datetime.now() - a
 
 if __name__ == "__main__":
     main()
