@@ -18,10 +18,11 @@ def getData():
     if request.method == 'POST':
         bookInput = request.files['book']
         websiteInput = request.form['website']
+        numWords = int(request.form['word_num'])
         if bookInput:
             book = bookInput.stream.read()
             words = analyzer.find_words(book)[:100]
         elif websiteInput:
-            words = analyzer.find_website_words(websiteInput)[:100]
+            words = analyzer.find_website_words(websiteInput)[:numWords]
         defs = [analyzer.dictionary[word][1] for word in words]
         return render_template("results.html", zip=zip(words, defs))

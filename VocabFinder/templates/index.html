@@ -8,8 +8,17 @@
     as defined by the <a href="http://gcide.gnu.org.ua/">GNU Collaborative International Dictionary of English</a>,
     and sorted by frequency of usage by the <a href="http://corpus.byu.edu/coha/">Corpus of Historical American English</a>.
     <form enctype="multipart/form-data" action="/" method="POST">
-        URL: <input type="url" name="website"><br><br>
-        <input type="file" class="btn btn-default btn-lg"name="book" title="Text file (.txt)" data-filename-placement="inside">
-        <button type="submit" class="btn btn-success btn-lg">Analyze text</button>
+        URL: <input type="url" name="website">
+        Number of words: <input type="text" name="word_num" value="100"<br><br>
+        <div class="input-group">
+            <span class="input-group-btn">
+                <span class="btn btn-primary btn-file">
+                    Browse&hellip; <input type="file" name="book">
+                </span>
+            </span>
+            <input type="text" class="form-control" readonly>
+        </div>
+        <button id="analyze" type="submit" class="btn btn-success btn-lg">Analyze text</button>
     </form>
 {% endblock %}
+
