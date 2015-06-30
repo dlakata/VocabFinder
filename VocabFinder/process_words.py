@@ -4,6 +4,7 @@ from datetime import datetime
 from nltk.corpus import wordnet
 from nltk.stem import WordNetLemmatizer
 from bs4 import BeautifulSoup
+from cookielib import CookieJar
 
 class TextAnalyzer(object):
 
@@ -11,17 +12,20 @@ class TextAnalyzer(object):
         self.lemmatize = prep_wordnet()
         self.dictionary = create_dictionary()
         self.valid_words = set(self.dictionary.keys())
-        self.trans_table = dict.fromkeys((i for i in xrange(sys.maxunicode) if not unicodedata.category(unichr(i)).startswith('L')), u' ')
+        self.trans_table = get_trans_table()
 
     def find_words(self, text):
         clean_text = text.decode('utf-8').translate(self.trans_table)
-        words = { word.strip().lower() for word in clean_text.split(' ') }
+        words = { word.strip().lower() for word in clean_text.split(' ') if len(word) > 3 }
         lemmatized_words = map(self.lemmatize, words)
         found = self.valid_words & set(lemmatized_words)
         return sorted(found, key=lambda word: self.dictionary[word][0])
 
-    def find_website_words(self, website):
-        response = urllib2.urlopen(website)
+    def find_website_words(self, url):
+        cj = CookieJar()
+        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+        request = urllib2.Request(url)
+        response = opener.open(request)
         html = response.read()
         response.close()
         text = BeautifulSoup(html).get_text()
@@ -39,19 +43,21 @@ def prep_wordnet():
 
 def create_dictionary():
     dictionary = dict()
-    new_file = open('words_freqs_defs.txt', 'r')
-    data = new_file.readlines()
-    new_file.close()
+    with open('words_freqs_defs.txt', 'r') as defs_file:
+        data = defs_file.readlines()
     for line in data:
         word, freq, dfn = line.decode('utf-8').split('\t')
         dictionary[word] = int(freq), dfn
     return dictionary
 
+def get_trans_table():
+    letters = [i for i in xrange(sys.maxunicode) if not unicodedata.category(unichr(i)).startswith('L')]
+    return dict.fromkeys(letters, u' ')
+
 def main():
     """ Main function """
-    book_file = open(sys.argv[1], 'r')
-    book = book_file.read()
-    book_file.close()
+    with open(sys.argv[1], 'r') as book_file:
+        book = book_file.read()
     analyzer = TextAnalyzer()
     a = datetime.now()
     found = analyzer.find_words(book)

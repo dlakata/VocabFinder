@@ -1,8 +1,8 @@
-import os
+from VocabFinder import app
 from flask import Flask, request, render_template
 from process_words import *
-
-app = Flask(__name__)
+import os
+    
 analyzer = TextAnalyzer()
 
 @app.route('/')
@@ -21,12 +21,7 @@ def getData():
         if bookInput:
             book = bookInput.stream.read()
             words = analyzer.find_words(book)[:100]
-        else:
+        elif websiteInput:
             words = analyzer.find_website_words(websiteInput)[:100]
         defs = [analyzer.dictionary[word][1] for word in words]
         return render_template("results.html", zip=zip(words, defs))
-
-if __name__ == "__main__":
-    app.debug = True
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
