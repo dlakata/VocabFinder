@@ -1,0 +1,29 @@
+{
+  "name": "vocabfinder",
+  "version": "1.0.0",
+  "description": "An app to find difficult vocabulary words",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-less": "^3.0.3",
+    "gulp-minify-css": "^1.2.0",
+    "gulp-uglify": "^1.2.0",
+    "gulp-watch": "^4.2.4",
+    "run-sequence": "^1.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dlakata/VocabFinder.git"
+  },
+  "author": "David Lakata",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dlakata/VocabFinder/issues"
+  },
+  "homepage": "https://github.com/dlakata/VocabFinder#readme"
+}

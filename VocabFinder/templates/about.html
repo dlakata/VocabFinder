@@ -1,11 +1,42 @@
-{% extends 'layout.html' %}
+{% extends 'base.html' %}
+{% set title = 'About Vocab Finder' %}
+
 {% block body %}
-    <h2>How does it work?</h2>
-    <p>Frequency and vocabulary lists are in the form of:<br>
-    [word]  [definition OR frequency]<br>
-    [word]  [definition OR frequency]<br>
-    ...<br></p>
-    <p>When given a frequency list, Vocab Finder returns all the words of the text
-    that did not occur in the list, as well as the lowest-frequency words that occurred,
-    for a total of 100 words.
+<h2>How does it work?</h2>
+<p>For the purposes of learning new words, a word's frequency of usage roughly describes its difficulty.
+Every word in the given text is lemmatized with the <a href="http://www.nltk.org/">Python Natural Language Toolkit</a>,
+so that words with the same root have equal difficulty. The lemmatized words are compared against a dictionary<sup>1</sup></p>
+
+<h2>Caveats</h2>
+<p>This tool is not perfect. If no results were found for a given text, or the results weren't satisfactory, any of the following problems could have been the reason.</p>
+<ul>
+<li>It's difficult to determine what a valid word should be. Many of the corpora used for this tool included thousands of
+    non-English strings of characters, misspellings, and unusual non-alphetic characters. This problem is compounded by
+    the lack of freely available English definitions. The GCIDE<sup>1</sup> aggregates definitions from the 1913
+    Webster's Revised Unabridged Dictionary, and <a href="https://wordnet.princeton.edu/">WordNet</a>. Although this accounts
+    for most words in the English language, more modern words like "blog" are noticeably absent. Additionally, there's a blurry
+    distinction between what constitutes a word that's rarely used, and a word that's simply archaic and no longer part
+    of the English lexicon.</li>
+<li>A word's frequency of usage provides a reasonable metric for determining its difficulty. However, this means that a word's calculated
+    difficulty is tightly coupled to the quality of the corpus used to generate the frequency list. For the purposes of learning new words,
+    a small corpus drawn from a highly specialized field wouldn't give any meaningful data, since most words in the English language would
+    not be found in the corpus. To mitigate this problem, the chosen frequency lists<sup>2</sup> contain millions of words from a huge number of sources, the breadth and variety of which sources should ensure useful frequency data.</li>
+<li>Lemmatization is not a perfect process, and the dictionary doesn't contain definitions for each form of every word.
+    Additionally, this tool will miss unusual uses of common words. That is, a common word that usually appears in noun form might have
+    an entirely different, unexpected meaning as a verb.</li>
+</ul>
+
+<h3>Notes</h3>
+<ol>
+<li><a href="http://gcide.gnu.org.ua/">GNU
+Collaborative International Dictionary of English</a></li>
+<li>Frequency sources:</li>
+<ul>
+<li><a href="http://www.anc.org/data/anc-second-release/frequency-data/">American National Corpus</a></li>
+<li><a href="http://www.kilgarriff.co.uk/bnc-readme.html">British National Corpus</a></li>
+<li><a href="http://www.monlp.com/2012/04/09/calculating-word-statistics-from-the-gutenberg-corpus/">Project Gutenberg</a></li>
+<li><a href="http://www.corpora.heliohost.org/statistics.html">Hans Christensen's frequency lists</a></li>
+<li><a href="http://norvig.com/google-books-common-words.txt">Peter Norvig's frequency list from Google Books</a></li>
+</ul>
+</ol>
 {% endblock %}

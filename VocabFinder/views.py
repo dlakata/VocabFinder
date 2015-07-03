@@ -1,9 +1,11 @@
 from VocabFinder import app
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for
 from process_words import *
 import os
     
 analyzer = TextAnalyzer()
+definitions = []
+validWords = {'sat': analyzer.sat_words, 'gre': analyzer.gre_words, 'hardest': analyzer.english_words}
 
 @app.route('/')
 def index():
@@ -14,14 +16,26 @@ def about():
     return render_template("about.html")
 
 @app.route('/', methods=['POST'])
-def getData():
-    if request.method == 'POST':
-        bookInput = request.files['book']
-        websiteInput = request.form['website']
-        if bookInput:
-            book = bookInput.stream.read()
-            words = analyzer.find_words(book)[:100]
-        elif websiteInput:
-            words = analyzer.find_website_words(websiteInput)[:100]
-        defs = [analyzer.dictionary[word][1] for word in words]
-        return render_template("results.html", zip=zip(words, defs))
+def getInput():
+    bookInput = request.files['book']
+    websiteInput = request.form['website']
+    textInput = request.form['text']
+    difficulty = request.form['difficulty']
+    numWords = int(request.form['word_num'])
+    valid = validWords[difficulty]
+    if bookInput:
+        book = bookInput.stream.read()
+        print len(book.split('\n'))
+        words = analyzer.find_words(book, valid)[:numWords]
+    elif websiteInput:
+        words = analyzer.find_website_words(websiteInput, valid)[:numWords]
+    elif textInput:
+        words = analyzer.find_words(textInput.encode('utf-8'), valid)[:numWords]
+    defs = [analyzer.dictionary[word] for word in words if word in analyzer.dictionary]
+    del definitions[:]
+    definitions.extend(zip(words, defs))
+    return redirect(url_for('results'))
+
+@app.route('/results')
+def results():
+    return render_template("results.html", definitions=definitions)

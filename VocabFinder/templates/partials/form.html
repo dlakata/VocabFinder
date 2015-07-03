@@ -1,0 +1,53 @@
+<form enctype="multipart/form-data" action="/" method="POST" id="vocab-form" class="form-inline">
+    <div class="form-group">
+        <label for="numInput">Number of words:</label>
+        <input type="number" class="form-control" id="numInput" name="word_num" value="100">
+        <div id="numError"></div>
+    </div>
+
+    <div class="form-group">
+        <label for="difficulty">Level of difficulty:</label>
+        <div id="difficulty-radio" class="btn-group" data-toggle="buttons">
+            <label class="btn btn-default">
+                <input type="radio" name="difficulty" id="difficulty" value="sat">
+                SAT
+            </label>
+            <label class="btn btn-default">
+                <input type="radio" name="difficulty" id="difficulty" value="gre">
+                GRE
+            </label>
+            <label class="btn btn-default active">
+                <input type="radio" name="difficulty" id="difficulty" value="hardest" checked>
+                Hardest
+            </label>
+        </div>
+    </div>
+
+    <div class="form-group" id="tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#url" aria-controls="url" role="tab" data-toggle="tab">URL</a></li>
+        <li role="presentation"><a href="#file" aria-controls="file" role="tab" data-toggle="tab">File</a></li>
+        <li role="presentation"><a href="#text" aria-controls="text" role="tab" data-toggle="tab">Text</a></li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="url">
+            <input type="url" class="form-control" id="urlInput" name="website" placeholder="Enter a URL">
+        </div>
+        <div role="tabpanel" class="tab-pane" id="file">
+            <div class="input-group">
+                <span class="input-group-btn">
+                    <span class="btn btn-primary btn-file">
+                        Browse&hellip; <input type="file" name="book" id="fileInput">
+                    </span>
+                </span>
+                <input type="text" class="form-control" placeholder="Upload a file" readonly>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="text">
+            <textarea class="form-control" id="textInput" rows="1" name="text" form="vocab-form" placeholder="Enter text"></textarea>
+        </div>
+      </div>
+    </div>
+    <div id="textError"></div>
+    <button action="{{ url_for('results') }}" id="analyze" name="analyze" type="submit" class="btn btn-lg">Analyze text</button>
+</form>
