@@ -1,15 +1,16 @@
 """ Finds words common to vocabulary list and text """
 import sys, urllib2, unicodedata, codecs
 from datetime import datetime
+import nltk
 from nltk.corpus import wordnet
 from nltk.stem import WordNetLemmatizer
 from bs4 import BeautifulSoup
 from cookielib import CookieJar
-#from weasyprint import HTML, CSS
 
 class TextAnalyzer(object):
 
     def __init__(self):
+        nltk.data.path.append('nltk_data')
         self.prep_dictionary()
         self.lemmatize = prep_wordnet()
         self.english_words = set(self.dictionary.keys())
