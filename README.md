@@ -17,11 +17,13 @@ Using VocabFinder
     $ virtualenv VocabFinder
     $ cd VocabFinder
     $ source bin/activate
+    $ npm install
+    $ bower install
     $ pip install -r requirements.txt
     $ python
     >>> import nltk
     >>> nltk.download()
-    [In the new window that appears, select 'wordnet' under Corpora, select 'Download', and exit the window.]
+    [In the new window that appears, download 'wordnet' from Corpora and 'Punkt' from Models. Exit the window.]
     ```
 3. Start the server.
 

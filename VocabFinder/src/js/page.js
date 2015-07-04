@@ -1,17 +1,4 @@
-$(document).on('change', '.btn-file :file', function() {
-  var input = $(this),
-      numFiles = input.get(0).files ? input.get(0).files.length : 1,
-      label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-  input.trigger('fileselect', [numFiles, label]);
-});
-
 $(document).ready( function() {
-  $('.btn-file :file').on('fileselect', function(event, numFiles, label) {
-    var input = $(this).parents('.input-group').find(':text');
-    if(input.length) {
-        input.val(label);
-    }
-  });
 
   var isValid = false;
   var clicked = false;
@@ -20,7 +7,7 @@ $(document).ready( function() {
     var isValid = true;
     var $numInput = $('#numInput');
     var $urlInput = $('#urlInput');
-    var $fileInput = $('input[readonly]');
+    var $fileInput = $('input[type="file"]');
     var $textInput = $('#textInput');
     if (!$numInput.val()) {
       $numInput.parent().addClass('has-error');
@@ -71,6 +58,26 @@ $(document).ready( function() {
     isValid = validate();
     if (!isValid) {
       e.preventDefault();
+    }
+  });
+
+  $('.word_row').on('click', function() {
+    var _this = $(this);
+    var $context_row = _this.next();
+    var $context = $context_row.find('.context');
+    if ($context_row.is(':visible')) {
+      $context_row.hide('slow');
+    } else {
+      $context_row.show('slow');
+    }
+    if ($context.text() === '') {
+      $context.html('<b>Context: </b>Looking...');
+      $.getJSON('/get_context', {
+          word: _this.find('.word').text()
+      }, function(data) {
+        var text = $context.html().replace('Looking...', data.result);
+        $context.html(text);
+      });
     }
   });
 });

@@ -1,30 +1,5 @@
 @import "../../../bower_components/bootstrap/less/bootstrap.less";
 
-.btn-file {
-  position: relative;
-  overflow: hidden;
-  margin: 10px auto;
-}
-.btn-file input[type=file] {
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin: 10px auto;
-  min-width: 100%;
-  min-height: 100%;
-  font-size: 100px;
-  text-align: right;
-  filter: alpha(opacity=0);
-  opacity: 0;
-  background: red;
-  cursor: inherit;
-  display: block;
-}
-input[readonly] {
-  background-color: white !important;
-  cursor: text !important;
-}
-
 .content {
   width: 90%;
   margin: 0 auto;
@@ -40,12 +15,16 @@ input, textarea {
   margin: 10px auto;
 }
 
-h1 {
+#header {
   text-align: center;
   a, a:hover {
     color: #000;
     text-decoration: none;
   }
+}
+
+#intro {
+  text-align: center;
 }
 
 #tabs {
@@ -73,13 +52,50 @@ h1 {
   }
 }
 
-.error {
-  color: red;
-}
-
 .author {
   text-align: center;
 }
+
+.form-control {
+  width: auto;
+}
+
+.form-inline .form-group {
+  display: block;
+  margin: 10px 0px;
+}
+
+#config {
+  margin: 0 auto;
+  display: block;
+  text-align: center;
+}
+
+.glyphicon-pencil {
+  font-size: 3em;
+  display: block;
+  margin: 20px;
+}
+
+.context_row {
+  display: none;
+}
+
+.bootstrap-filestyle.input-group {
+  input {
+    width: 150px !important;
+  }
+  
+  .group-span-filestyle.input-group-btn {
+    margin-top: 10px !important;
+    display: block !important;
+  }
+
+  label {
+    max-width: none;
+  }
+}
+
 
 /* Bigger than 750 */
 @media (min-width: 750px) {
@@ -91,7 +107,7 @@ h1 {
 /* Bigger than 1000 */
 @media (min-width: 1000px) {
   .content {
-    width: 50%;
+    width: 75%;
   }
 }
 

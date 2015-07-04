@@ -17,7 +17,10 @@
     </head>
     <body>
         <div class="content">
-            <h1><a href="{{ url_for('index') }}">Vocab Finder</a></h1>
+            <div id="header">
+                <a href="{{ url_for('index') }}"><div class="glyphicon glyphicon-pencil" aria-hidden="true"></div></a>
+                <h1><a href="{{ url_for('index') }}">Vocab Finder</a></h1>
+            </div>
             {% block body %}
             {% endblock %}
         <hr>

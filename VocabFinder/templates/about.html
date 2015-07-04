@@ -5,7 +5,9 @@
 <h2>How does it work?</h2>
 <p>For the purposes of learning new words, a word's frequency of usage roughly describes its difficulty.
 Every word in the given text is lemmatized with the <a href="http://www.nltk.org/">Python Natural Language Toolkit</a>,
-so that words with the same root have equal difficulty. The lemmatized words are compared against a dictionary<sup>1</sup></p>
+so that words with the same root have equal difficulty. The lemmatized words are compared against a dictionary<sup>1</sup>
+to confirm that they're proper English. Finally, the words are ranked according to their frequency of usage,<sup>2</sup>
+and the least frequent words are returned.</p>
 
 <h2>Caveats</h2>
 <p>This tool is not perfect. If no results were found for a given text, or the results weren't satisfactory, any of the following problems could have been the reason.</p>

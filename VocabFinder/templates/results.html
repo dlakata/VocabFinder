@@ -3,6 +3,8 @@
 {% block body %}
 {% if definitions|length != 0 %}
 <h3>The Words</h3>
+<p>Showing {{ num_words }} {{ difficulty }} from {{ source }}.</p>
+<p>Click on a word to see its context in the text.</p>
 <table class="table table-condensed table-responsive">
     <thead>
         <tr>
@@ -12,9 +14,13 @@
     </thead>
     <tbody>
         {% for word, def in definitions %}
-        <tr>
-            <td> {{ word }} </td>
-            <td> {{ def }} </td>
+        <tr class="word_row">
+            <td class="word" >{{ word }}</td>
+            <td>{{ def }}</td>
+        </tr>
+        <tr class="context_row">
+            <td class="context" colspan="2"></td>
+            <td></td>
         </tr>
         {% endfor %}
     </tbody>
