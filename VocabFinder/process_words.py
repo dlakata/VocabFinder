@@ -3,7 +3,7 @@ import sys, urllib2, unicodedata, codecs, nltk.data, re
 from datetime import datetime
 from nltk.corpus import wordnet
 from nltk.stem import WordNetLemmatizer
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Doctype
 from cookielib import CookieJar
 
 class TextAnalyzer(object):
@@ -33,8 +33,18 @@ class TextAnalyzer(object):
         response = opener.open(request)
         html = response.read()
         response.close()
-        text = BeautifulSoup(html).get_text()
+        soup = BeautifulSoup(re.sub(r'<!--.*-->', '', str(html)))
+        for element in soup.select('[style~="display:none"]'):
+            element.extract()
+        text = ''.join(filter(self.visible_html_entities, soup.findAll(text=True)))
         return self.find_words(text.encode('utf-8'), valid_words)
+
+    def visible_html_entities(self, element):
+        if element.parent.name in ['style', 'script', '[document]', 'head', 'title']:
+            return False
+        elif isinstance(element, Doctype):
+            return False
+        return True
 
     def get_sentence(self, word):
         """Returns the sentence in which the word occurred"""

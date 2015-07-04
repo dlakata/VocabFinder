@@ -66,9 +66,9 @@ $(document).ready( function() {
     var $context_row = _this.next();
     var $context = $context_row.find('.context');
     if ($context_row.is(':visible')) {
-      $context_row.hide('slow');
+      $context_row.hide('fast');
     } else {
-      $context_row.show('slow');
+      $context_row.show('fast');
     }
     if ($context.text() === '') {
       $context.html('<b>Context: </b>Looking...');
