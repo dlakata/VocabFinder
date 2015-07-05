@@ -20,6 +20,11 @@
             <div id="header">
                 <a href="{{ url_for('index') }}"><div class="glyphicon glyphicon-pencil" aria-hidden="true"></div></a>
                 <h1><a href="{{ url_for('index') }}">Vocab Finder</a></h1>
+                {% if g.user.is_authenticated() %}
+                    <p><a href="{{ url_for('settings') }}">Settings</a> <a href="{{ url_for_security('logout') }}">Logout</a></p>
+                {% else %}
+                    <p><a href="{{ url_for_security('register') }}">Sign up</a> or <a href="{{ url_for_security('login') }}">Login</a></p>
+                {% endif %}
             </div>
             {% block body %}
             {% endblock %}

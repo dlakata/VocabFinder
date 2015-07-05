@@ -1,7 +1,14 @@
 """Handles requests to app"""
-from VocabFinder import app
-from flask import request, render_template, jsonify
+from VocabFinder import app, db
+from flask.ext.security import Security, SQLAlchemyUserDatastore, current_user, \
+    login_user, logout_user, login_required, RegisterForm, LoginForm
+from flask import request, session, render_template, jsonify, \
+    flash, redirect, url_for, g
+from models import User, Role
 from VocabFinder.process_words import TextAnalyzer
+
+user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+security = Security(app, user_datastore)
 
 analyzer = TextAnalyzer()
 valid_words = {
@@ -9,6 +16,11 @@ valid_words = {
     'gre': analyzer.gre_words,
     'hardest': analyzer.english_words
 }
+
+@app.before_request
+def before_request():
+    """Sets global current_user"""
+    g.user = current_user
 
 @app.route('/')
 def index():
@@ -67,3 +79,9 @@ def results():
 def page_not_found(_):
     """Custom 404 error page"""
     return render_template('404.html'), 404
+
+@app.route('/settings')
+@login_required
+def settings():
+    """User customization"""
+    return render_template('settings.html')

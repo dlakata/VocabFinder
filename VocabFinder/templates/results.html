@@ -1,31 +1,32 @@
 {% extends 'base.html' %}
 {% set title = 'Vocab Finder: The Words' %}
+
 {% block body %}
 {% if definitions|length != 0 %}
-<h3>The Words</h3>
-<p>Showing {{ num_words }} {{ difficulty }} from {{ source }}.</p>
-<p>Click on a word to see its context in the text.</p>
-<table class="table table-condensed table-responsive">
-    <thead>
-        <tr>
-            <th class="col-md-4">Word</th>
-            <th class="col-md-8">Definition</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for word, def in definitions %}
-        <tr class="word_row">
-            <td class="word" >{{ word }}</td>
-            <td>{{ def }}</td>
-        </tr>
-        <tr class="context_row">
-            <td class="context" colspan="2"></td>
-            <td></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <h3>The Words</h3>
+    <p>Showing {{ num_words }} {{ difficulty }} from {{ source }}.</p>
+    <p>Click on a word to see its context in the text.</p>
+    <table class="table table-condensed table-responsive">
+        <thead>
+            <tr>
+                <th class="col-md-4">Word</th>
+                <th class="col-md-8">Definition</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for word, def in definitions %}
+            <tr class="word_row">
+                <td class="word" >{{ word }}</td>
+                <td>{{ def }}</td>
+            </tr>
+            <tr class="context_row">
+                <td class="context" colspan="2"></td>
+                <td></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% else %}
-<h3>No words found. Read <a href="{{ url_for('about') }}">why</a>.</h3>
+    <h3>No words found. Read <a href="{{ url_for('about') }}">why</a>.</h3>
 {% endif %}
 {% endblock %}
