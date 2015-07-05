@@ -40,6 +40,7 @@ class TextAnalyzer(object):
         return self.find_words(text.encode('utf-8'), valid_words)
 
     def visible_html_entities(self, element):
+        """Filters html tags that aren't part of the website's text"""
         if element.parent.name in ['style', 'script', '[document]', 'head', 'title']:
             return False
         elif isinstance(element, Doctype):
