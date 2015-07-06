@@ -2,6 +2,19 @@
 {% set title = 'Settings' %}
 {% block body %}
 
-More functionality coming soon!
+<table class="table table-condensed table-responsive">
+    <thead>
+        <tr>
+            <th class="col-md-4">Your saved lists</th>
+        </tr>
+    </thead>
+    <tbody>
+	{% for set in g.user.sets %}
+		<tr>
+		    <td class="saved_set"><a href="{{ url_for('saved_set', id=set.id) }}">{{ set.source }}</a></td>
+		</tr>
+	{% endfor %}
+    </tbody>
+</table>
 
 {% endblock %}

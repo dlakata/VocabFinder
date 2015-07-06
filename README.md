@@ -25,10 +25,17 @@ Using VocabFinder
     >>> nltk.download()
     [In the new window that appears, download 'wordnet' from Corpora and 'Punkt' from Models. Exit the window.]
     ```
-3. Start the server.
+4. Create and start a PostgreSQL database. Set the environment variable ```DATABASE_URL``` to the location of the database.
+5. Initialize and upgrade the database.
 
     ```
-    $ python runserver.py
+    $ python manage.py db init
+    $ python manage.py db upgrade
+    ```
+5. Start the server.
+
+    ```
+    $ python manage.py runserver
     ```
 
 The ```process_words``` module can be run independently:

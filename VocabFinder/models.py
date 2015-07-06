@@ -30,12 +30,13 @@ class User(UserMixin, db.Model):
             return None
 
     def __repr__(self):
-        return '<User %r>' % (self.username)
+        return '<User %r>' % (self.email)
 
 class VocabSet(db.Model):
     """The vocab set for a particular source"""
     id = db.Column(db.Integer, primary_key=True)
     source = db.Column(db.String(140))
+    difficulty = db.Column(db.String(30))
     timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     words = db.relationship('Definition', backref=db.backref('vocab_set'))
@@ -47,7 +48,7 @@ class Definition(db.Model):
     """A word and its definition"""
     id = db.Column(db.Integer, primary_key=True)
     word = db.Column(db.String(40))
-    definition = db.Column(db.String(255))
+    definition = db.Column(db.Text)
     set_id = db.Column(db.Integer, db.ForeignKey('vocab_set.id'))
 
     def __repr__(self):

@@ -80,4 +80,8 @@ $(document).ready( function() {
       });
     }
   });
+
+  $('#save_words').on('click', function() {
+    $.getJSON('/save_words');
+  });
 });
