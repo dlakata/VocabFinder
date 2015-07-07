@@ -18,20 +18,34 @@
     <body>
         <div class="content">
             <div id="header">
+                {% if g.user.is_authenticated() %}
+                    <ul class="menu">
+                        <li><a href="{{ url_for('saved_lists') }}">Your lists</a></li>
+                        <li><a href="{{ url_for_security('logout') }}">Logout</a></li>
+                    </ul>
+                {% else %}
+                    <ul class="menu">
+                        <li><a href="{{ url_for_security('register') }}">Sign up</a></li>
+                        <li><a href="{{ url_for('login') }}">Login</a></li>
+                    </ul>
+                {% endif %}
                 <a href="{{ url_for('index') }}"><div class="glyphicon glyphicon-pencil" aria-hidden="true"></div></a>
                 <h1><a href="{{ url_for('index') }}">Vocab Finder</a></h1>
-                {% if g.user.is_authenticated() %}
-                    <p><a href="{{ url_for('settings') }}">Settings</a> <a href="{{ url_for_security('logout') }}">Logout</a></p>
-                {% else %}
-                    <p><a href="{{ url_for_security('register') }}">Sign up</a> or <a href="{{ url_for_security('login') }}">Login</a></p>
-                {% endif %}
             </div>
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <ul class=flashes>
+                {% for message in messages %}
+                  <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
             {% block body %}
             {% endblock %}
         <hr>
-        <a href="https://github.com/dlakata/VocabFinder"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
         <div class="author">
-            <p>&copy; David Lakata 2015 | <a href="{{ url_for('about') }}">About</a></p>
+            <p>&copy; David Lakata 2015 | <a href="https://github.com/dlakata/VocabFinder">GitHub</a> | <a href="{{ url_for('about') }}">About</a></p>
         </div>
         </div>
     <script src="{{ url_for('static', filename='js/page.js') }}"></script>

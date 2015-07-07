@@ -16,6 +16,7 @@ gulp.task('less', function() {
 
 gulp.task('js', function() {
     gulp.src(['bower_components/bootstrap/dist/js/bootstrap.js',
+        'bower_components/bootstrap-table/dist/bootstrap-table.js',
         'VocabFinder/src/js/*.js'])
         .pipe(concat('page.js'))
         .pipe(uglify())

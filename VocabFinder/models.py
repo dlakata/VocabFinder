@@ -35,21 +35,13 @@ class User(UserMixin, db.Model):
 class VocabSet(db.Model):
     """The vocab set for a particular source"""
     id = db.Column(db.Integer, primary_key=True)
-    source = db.Column(db.String(140))
+    source = db.Column(db.String(500))
+    text = db.Column(db.Text)
     difficulty = db.Column(db.String(30))
+    num_words = db.Column(db.Integer)
+    public = db.Column(db.Boolean())
     timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    words = db.relationship('Definition', backref=db.backref('vocab_set'))
 
     def __repr__(self):
         return '<VocabSet %r>' % (self.source)
-
-class Definition(db.Model):
-    """A word and its definition"""
-    id = db.Column(db.Integer, primary_key=True)
-    word = db.Column(db.String(40))
-    definition = db.Column(db.Text)
-    set_id = db.Column(db.Integer, db.ForeignKey('vocab_set.id'))
-
-    def __repr__(self):
-        return '<Definition %r>' % (self.word)

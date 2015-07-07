@@ -4,14 +4,22 @@
 {% block body %}
 {% if definitions|length != 0 %}
     <h3>The Words</h3>
-    <p>Showing {{ num_words }} {{ difficulty }} from {{ source }}.</p>
+    {% if vocab_set %}
+        <p>Showing {{ num_words }} {{ difficulty }} from <a href="{{ url_for('saved_set_text', id=vocab_set.id) }}">{{ source }}</a>.</p>
+    {% else %}
+        <p>Showing {{ num_words }} {{ difficulty }} from {{ source }}.</p>
+    {% endif %}
+    {% if g.user.is_authenticated() %}
+        <p>You can see all the lists you've made <a href="{{ url_for('saved_lists') }}">here</a>.
+    {% else %}
+        <p><a href="{{ url_for_security('register') }}">Make an account</a> or <a href="{{ url_for('login') }}">log in</a> to save your lists.</p>
+    {% endif %}
     <p>Click on a word to see its context in the text.</p>
-    <button id="save_words" class="btn btn-lg">Save these words to your account!</button>
-    <table class="table table-condensed table-responsive">
+    <table data-toggle="table" class="table table-condensed table-responsive">
         <thead>
             <tr>
-                <th class="col-md-4">Word</th>
-                <th class="col-md-8">Definition</th>
+                <th data-sortable="true" class="col-md-4">Word</th>
+                <th data-sortable="true" class="col-md-8">Definition</th>
             </tr>
         </thead>
         <tbody>

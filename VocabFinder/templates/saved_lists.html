@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% set title = 'Saved lists' %}
+{% block body %}
+
+{% if g.user.sets %}
+    <div id="saved-message"></div>
+    <table data-toggle="table" class="saved-sets table table-condensed table-responsive">
+        <thead>
+            <tr>
+                <th data-sortable="true">Vocab list</th>
+                <th data-sortable="true">Difficulty</th>
+                <th data-sortable="true"># words</th>
+                <th data-sortable="true">Public</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+    	{% for set in g.user.sets %}
+    		<tr>
+    		    <td><a href="{{ url_for('saved_set', id=set.id) }}">{{ set.source }}</a></td>
+                <td>
+                    <select data-vocab-id="{{ set.id }}" class="difficulty-level form-control">
+                        {% for option in ['sat', 'gre', 'hardest'] %}
+                            {% if option == set.difficulty %}
+                            <option selected>{{ option }}</option>
+                            {% else %}
+                            <option>{{ option }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <input type="text" data-vocab-id="{{ set.id }}" class="num-words form-control" value="{{ set.num_words }}">
+                </td>
+                <td>
+                    <div class="checkbox">
+                        {% if set.public %}
+                            <label><input data-vocab-id="{{ set.id }}" type="checkbox" checked></label>
+                        {% else %}
+                            <label><input data-vocab-id="{{ set.id }}" type="checkbox"></label>
+                        {% endif %}
+                    </div>
+                </td>
+                <td>
+                    <button data-vocab-id="{{ set.id }}" type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </td>
+    		</tr>
+    	{% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>You don't have any saved lists!</p>
+{% endif %}
+
+{% endblock %}

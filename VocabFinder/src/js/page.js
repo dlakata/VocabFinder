@@ -1,66 +1,5 @@
 $(document).ready( function() {
 
-  var isValid = false;
-  var clicked = false;
-
-  var validate = function() {
-    var isValid = true;
-    var $numInput = $('#numInput');
-    var $urlInput = $('#urlInput');
-    var $fileInput = $('input[type="file"]');
-    var $textInput = $('#textInput');
-    if (!$numInput.val()) {
-      $numInput.parent().addClass('has-error');
-      isValid = false;
-      return isValid;
-    } else {
-      $numInput.parent().removeClass('has-error');
-    }
-
-    if (!$urlInput.val()) {
-      $urlInput.parent().addClass('has-error');
-      isValid = false;
-    } else {
-      $urlInput.parent().removeClass('has-error');
-      isValid = true;
-      return isValid;
-    }
-
-    if (!$fileInput.val()) {
-      $fileInput.parent().addClass('has-error');
-      isValid = false;
-    } else {
-      $fileInput.parent().removeClass('has-error');
-      isValid = true;
-      return isValid;
-    }
-
-    if (!$textInput.val()) {
-      $textInput.parent().addClass('has-error');
-      isValid = false;
-    } else {
-      $textInput.parent().removeClass('has-error');
-      isValid = true;
-      return isValid;
-    }
-
-    return isValid;
-  }
-
-  $('input').on('change', function() {
-    if (clicked) {
-      isValid = validate();
-    }
-  });
-
-  $('#analyze').on('click', function(e) {
-    clicked = true;
-    isValid = validate();
-    if (!isValid) {
-      e.preventDefault();
-    }
-  });
-
   $('.word_row').on('click', function() {
     var _this = $(this);
     var $context_row = _this.next();
@@ -81,7 +20,50 @@ $(document).ready( function() {
     }
   });
 
-  $('#save_words').on('click', function() {
-    $.getJSON('/save_words');
+  $('#saved-message').text("These are all the vocab lists you've made while logged in.");
+
+  var saveMessage = function() {
+    $('#saved-message').text('Your changes were saved!');
+    setTimeout(function(){
+      $('#saved-message').text("These are all the vocab lists you've made while logged in.");
+    }, 2000);
+  }
+
+  $('[type="checkbox"]').on('click', function() {
+    var _this = $(this);
+    $.getJSON('/change_visibility', {
+      id: _this.data('vocab-id')
+    });
+    saveMessage();
+  });
+
+  $('.close').on('click', function() {
+    var _this = $(this);
+    $.getJSON('/delete_vocab_set', {
+      id: _this.data('vocab-id')
+    });
+    _this.parent().parent().remove();
+    if ($('.close').length === 0) {
+      location.reload();
+    }
+    saveMessage();
+  });
+
+  $('.difficulty-level').on('change', function() {
+    var _this = $(this);
+    $.getJSON('/change_difficulty', {
+      id: _this.data('vocab-id'),
+      difficulty: _this.val()
+    });
+    saveMessage();
+  });
+
+  $('.num-words').on('change', function() {
+    var _this = $(this);
+    $.getJSON('/change_num_words', {
+      id: _this.data('vocab-id'),
+      num_words: _this.val()
+    });
+    saveMessage();
   });
 });
