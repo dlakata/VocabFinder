@@ -160,7 +160,10 @@ def results():
     text_input = request.form['text']
     difficulty = request.form['difficulty']
     num_input = request.form['word_num']
-    num_words = int(num_input) if num_input else 100
+    if num_input and num_input.isdigit():
+        num_words = int(num_input)
+    else:
+        num_words = 100
     valid = valid_words[difficulty]
     difficulty_level = difficulty_text[difficulty]
     if book_input:
