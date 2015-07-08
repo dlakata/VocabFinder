@@ -8,6 +8,7 @@ from models import User, Role, VocabSet
 from VocabFinder.process_words import TextAnalyzer
 from datetime import datetime
 from functools import wraps
+from urlparse import urlparse
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)
@@ -158,7 +159,8 @@ def results():
     website_input = request.form['website']
     text_input = request.form['text']
     difficulty = request.form['difficulty']
-    num_words = int(request.form['word_num'])
+    num_input = request.form['word_num']
+    num_words = int(num_input) if num_input else 100
     valid = valid_words[difficulty]
     difficulty_level = difficulty_text[difficulty]
     if book_input:
@@ -170,13 +172,16 @@ def results():
             flash("Please upload a .txt file")
             return redirect(url_for('index'))
     elif website_input:
+        if not validate_url(website_input):
+            flash("Please enter a valid, http-prefixed URL.")
+            return redirect(url_for('index'))
         source = website_input
         words = analyzer.find_website_words(website_input, valid)
     elif text_input:
         source = "user input"
         words = analyzer.find_words(text_input.encode('utf-8'), valid)
     else:
-        flash("You need to provide an input file.")
+        flash("You need to provide some input.")
         return redirect(url_for('index'))
     defs = [analyzer.dictionary[word] for word in words[:num_words] if word in analyzer.dictionary]
     definitions = zip(words, defs)
@@ -201,6 +206,7 @@ def page_not_found(_):
     """Custom 404 error page"""
     return render_template('404.html'), 404
 
+@app.errorhandler(Exception)
 @app.errorhandler(500)
 def internal_error(_):
     """Custom 500 error page"""
@@ -213,3 +219,10 @@ def saved_lists():
     """User customization"""
     return render_template('saved_lists.html')
 
+def validate_url(url):
+    parse = urlparse(url)
+    if not parse.scheme:
+        return False
+    if len(parse.netloc.split('.')) == 1:
+        return False
+    return True

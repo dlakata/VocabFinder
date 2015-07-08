@@ -41,7 +41,7 @@ class TextAnalyzer(object):
 
     def visible_html_entities(self, element):
         """Filters html tags that aren't part of the website's text"""
-        if element.parent.name in ['style', 'script', '[document]', 'head', 'title']:
+        if element.parent.name in ['style', 'script', 'head', 'title']:
             return False
         elif isinstance(element, Doctype):
             return False
