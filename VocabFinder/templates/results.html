@@ -12,7 +12,7 @@
     {% if g.user.is_authenticated() %}
         <p>You can see all the lists you've made <a href="{{ url_for('saved_lists') }}">here</a>.
     {% else %}
-        <p><a href="{{ url_for_security('register') }}">Make an account</a> or <a href="{{ url_for('login') }}">log in</a> to save your lists.</p>
+        <p><a href="{{ url_for_security('register') }}">Make an account</a> or <a href="{{ url_for_security('login') }}">log in</a> to save your lists.</p>
     {% endif %}
     <p>Click on a word to see its context in the text.</p>
     <table class="results table table-condensed table-responsive">

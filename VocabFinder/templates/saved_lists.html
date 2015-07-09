@@ -17,7 +17,11 @@
         <tbody>
     	{% for set in g.user.sets %}
     		<tr>
+                {% if "user input" == set.source %}
+                <td><a href="{{ url_for('saved_set', id=set.id) }}">(User input) {{ set.text[:50] }}...</a></td>
+                {% else %}
     		    <td><a href="{{ url_for('saved_set', id=set.id) }}">{{ set.source }}</a></td>
+                {% endif %}
                 <td>
                     <select data-vocab-id="{{ set.id }}" class="difficulty-level form-control">
                         {% for option in ['sat', 'gre', 'hardest'] %}

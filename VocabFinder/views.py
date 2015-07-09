@@ -10,8 +10,8 @@ from datetime import datetime
 from functools import wraps
 from urlparse import urlparse
 
-user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-security = Security(app, user_datastore)
+datastore = SQLAlchemyUserDatastore(db, User, Role)
+security = Security(app, datastore)
 
 analyzer = TextAnalyzer()
 valid_words = {
@@ -35,7 +35,7 @@ def owner_required(f):
             return redirect(url_for('index'))
         if g.user.is_anonymous() or g.user.id != vocab_set.user_id:
             flash("Sorry, only the vocab set's owner can do that")
-            return redirect(url_for('login', next=request.url))
+            return redirect(url_for_security('login', next=request.url))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -49,15 +49,16 @@ def index():
     """Shows index"""
     return render_template("index.html")
 
-@app.route('/login')
-def login(*args, **kwargs):
-    """Wrapper for Flask-Security's login route"""
-    flask.ext.login(*args, **kwargs)
-
 @app.route('/about')
 def about():
     """Shows about page"""
     return render_template("about.html")
+
+@app.route('/account')
+@login_required
+def account():
+    """Shows user's account"""
+    return render_template("security/account.html")
 
 @app.route('/change_visibility')
 @owner_required
@@ -66,7 +67,7 @@ def change_visibility():
     id = request.args.get('id', 0, type=int)
     vocab_set = VocabSet.query.get(id)
     vocab_set.public = not vocab_set.public
-    db.session.commit()
+    datastore.commit()
     return ""
 
 @app.route('/change_difficulty')
@@ -77,7 +78,7 @@ def change_difficulty():
     difficulty = request.args.get('difficulty', 'hardest', type=str)
     vocab_set = VocabSet.query.get(id)
     vocab_set.difficulty = difficulty
-    db.session.commit()
+    datastore.commit()
     return ""
 
 @app.route('/change_num_words')
@@ -88,7 +89,7 @@ def change_num_words():
     num_words = request.args.get('num_words', 100, type=int)
     vocab_set = VocabSet.query.get(id)
     vocab_set.num_words = num_words
-    db.session.commit()
+    datastore.commit()
     return ""
 
 @app.route('/delete_vocab_set')
@@ -97,8 +98,8 @@ def delete_vocab_set():
     """Deletes a vocab set"""
     id = request.args.get('id', 0, type=int)
     vocab_set = VocabSet.query.get(id)
-    db.session.delete(vocab_set)
-    db.session.commit()
+    datastore.delete(vocab_set)
+    datastore.commit()
     return ""
 
 @app.route('/get_context')
@@ -113,10 +114,10 @@ def saved_set(id):
     vocab_set = VocabSet.query.get(id)
     if vocab_set is None:
         flash("Sorry, that vocab set couldn't be found")
-        return redirect(url_for('login', next=request.url))
+        return redirect(url_for_security('login', next=request.url))
     if (g.user.is_anonymous() or g.user.id != vocab_set.user_id) and not vocab_set.public:
         flash("Sorry, the owner hasn't made that vocab set publicly available")
-        return redirect(url_for('login', next=request.url))
+        return redirect(url_for_security('login', next=request.url))
     difficulty = vocab_set.difficulty
     num_words = vocab_set.num_words
     valid = valid_words[difficulty]
@@ -137,10 +138,10 @@ def saved_set_text(id):
     vocab_set = VocabSet.query.get(id)
     if vocab_set is None:
         flash("Sorry, that vocab set couldn't be found")
-        return redirect(url_for('login', next=request.url))
+        return redirect(url_for_security('login', next=request.url))
     if (g.user.is_anonymous() or g.user.id != vocab_set.user_id) and not vocab_set.public:
         flash("Sorry, the owner hasn't made that vocab set publicly available")
-        return redirect(url_for('login', next=request.url))
+        return redirect(url_for_security('login', next=request.url))
     source = vocab_set.source
     if "http" in source:
         return redirect(source)
@@ -196,8 +197,8 @@ def results():
         vocab_set.public = False
         vocab_set.timestamp = datetime.now()
         vocab_set.user = g.user
-        db.session.add(vocab_set)
-        db.session.commit()
+        datastore.put(vocab_set)
+        datastore.commit()
     return render_template("results.html",
             num_words=num_words,
             difficulty=difficulty_level,
@@ -209,7 +210,6 @@ def page_not_found(_):
     """Custom 404 error page"""
     return render_template('404.html'), 404
 
-@app.errorhandler(Exception)
 @app.errorhandler(500)
 def internal_error(_):
     """Custom 500 error page"""

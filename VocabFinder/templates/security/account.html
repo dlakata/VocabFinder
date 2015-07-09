@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% set title = 'Account' %}
+{% block body %}
+
+<h2>Account options</h2>
+<ul>
+<li><a href="{{ url_for_security('change_password') }}">Change password</a></li>
+</ul>
+
+{% endblock %}
