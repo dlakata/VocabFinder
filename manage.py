@@ -1,5 +1,5 @@
 """Starts the app"""
-from VocabFinder import app, db
+from vocabfinder import app, db
 from flask.ext.script import Server, Manager
 from flask.ext.migrate import Migrate, MigrateCommand
 from flask.ext.mail import Mail

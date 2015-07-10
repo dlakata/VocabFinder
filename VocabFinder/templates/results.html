@@ -2,6 +2,7 @@
 {% set title = 'Vocab Finder: The Words' %}
 
 {% block body %}
+{% include 'partials/modal.html' %}
 {% if definitions|length != 0 %}
     <h3>The Words</h3>
     {% if vocab_set %}
@@ -14,8 +15,9 @@
     {% else %}
         <p><a href="{{ url_for_security('register') }}">Make an account</a> or <a href="{{ url_for_security('login') }}">log in</a> to save your lists.</p>
     {% endif %}
-    <p>Click on a word to see its context in the text.</p>
-    <table class="results table table-condensed table-responsive">
+    <p>Click on a word to see its context in the text, etymology, 
+        additional definitions, and pronunciation.</p>
+    <table data-toggle="table" class="results table table-condensed table-responsive">
         <thead>
             <tr>
                 <th data-sortable="true" class="col-md-4">Word</th>
@@ -25,12 +27,8 @@
         <tbody>
             {% for word, def in definitions %}
             <tr class="word_row">
-                <td class="word" >{{ word }}</td>
-                <td>{{ def }}</td>
-            </tr>
-            <tr class="context_row">
-                <td class="context" colspan="2"></td>
-                <td></td>
+                <td class="word" data-toggle="modal" data-target="#myModal">{{ word }}</td>
+                <td class="definition">{{ def }}</td>
             </tr>
             {% endfor %}
         </tbody>

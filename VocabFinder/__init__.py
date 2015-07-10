@@ -10,4 +10,4 @@ mail = Mail(app)
 babel = Babel(app)
 db = SQLAlchemy(app)
 
-import VocabFinder.views, VocabFinder.models
+import vocabfinder.views, vocabfinder.models

@@ -1,17 +1,22 @@
 """Handles requests to app"""
-from VocabFinder import app, db
+from vocabfinder import app, db
 from flask.ext.security import Security, SQLAlchemyUserDatastore, current_user, \
     login_user, logout_user, login_required, RegisterForm, LoginForm
 from flask import request, session, render_template, jsonify, \
     flash, redirect, url_for, g
 from models import User, Role, VocabSet
-from VocabFinder.process_words import TextAnalyzer
+from vocabfinder.process_words import TextAnalyzer
 from datetime import datetime
 from functools import wraps
 from urlparse import urlparse
+from urllib import urlopen
+import json
 
 datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, datastore)
+
+api_key = "&api_key=" + app.config['WORDNIK_API_KEY']
+base_url = "http://api.wordnik.com/v4/word.json/"
 
 analyzer = TextAnalyzer()
 valid_words = {
@@ -107,6 +112,27 @@ def get_context():
     """Returns the word's context"""
     sentence = analyzer.get_sentence(request.args.get('word', '', type=str))
     return jsonify(result=sentence)
+
+@app.route('/get_definitions')
+def get_definitions():
+    """Returns the word's definitions"""
+    word = request.args.get('word', '', type=str)
+    url = urlopen(base_url + word + "/definitions?limit=200&sourceDictionaries=all&useCanonical=false&includeTags=false" + api_key)
+    return url.read()
+
+@app.route('/get_etymology')
+def get_etymology():
+    """Returns the word's etymology"""
+    word = request.args.get('word', '', type=str)
+    url = urlopen(base_url + word + "/etymologies?useCanonical=true" + api_key)
+    return url.read()
+
+@app.route('/get_pronunciation')
+def get_pronunciation():
+    """Returns the word's pronunciation"""
+    word = request.args.get('word', '', type=str)
+    url = urlopen(base_url + word + "/audio?useCanonical=false&limit=50" + api_key)
+    return url.read()
 
 @app.route('/saved_set/<int:id>')
 def saved_set(id):
@@ -210,6 +236,7 @@ def page_not_found(_):
     """Custom 404 error page"""
     return render_template('404.html'), 404
 
+@app.errorhandler(Exception)
 @app.errorhandler(500)
 def internal_error(_):
     """Custom 500 error page"""

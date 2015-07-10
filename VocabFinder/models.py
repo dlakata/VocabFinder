@@ -1,5 +1,5 @@
 from flask.ext.security import UserMixin, RoleMixin
-from VocabFinder import db
+from vocabfinder import db
 
 roles_users = db.Table('roles_users',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
