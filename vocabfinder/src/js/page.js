@@ -5,16 +5,13 @@ $(document).ready( function() {
     var word = _this.find('.word').text();
     $('.modal-title').text(word);
 
-    var $context = $('#context');
-    $context.html('<b>Context: </b>Looking...');
-    $.getJSON('/get_context', {
-        word: word
-    }, function(data) {
-      var text = $context.html().replace('Looking...', data.result);
-      $context.html(text);
-    });
-
     var $definition = $('#definition');
+    var $etymology = $('#etymology');
+    var $pronunciation = $('#pronunciation');
+    $definition.html('<b>Definitions:</b> Looking...');
+    $etymology.html('<b>Etymology:</b> Looking...');
+    $pronunciation.html('<b>Pronunciation:</b> Looking...');
+
     $.getJSON('/get_definitions', {
       word : word
     }, function(data) {
@@ -28,7 +25,6 @@ $(document).ready( function() {
       }
     });
 
-    var $etymology = $('#etymology');
     $.getJSON('/get_etymology', {
       word: word
     }, function(data) {
@@ -38,13 +34,12 @@ $(document).ready( function() {
       }
     });
 
-    var $pronunciation = $('#pronunciation');
     $.getJSON('/get_pronunciation', {
       word: word
     }, function(data) {
       var text = $(data).first().prop('fileUrl');
       if (text !== '') {
-        $pronunciation.html('<b>Pronunciation:</b> ' + '<a href="' + text + '">Audio</a>');
+        $pronunciation.html('<b>Pronunciation:</b> ' + '<a target="_blank" href="' + text + '">Audio</a>');
       }
     });
   });

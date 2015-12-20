@@ -7,30 +7,30 @@ var uglify = require('gulp-uglify');
 var runSequence = require('run-sequence');
 
 gulp.task('less', function() {
-    gulp.src('VocabFinder/src/less/**/*.less')
+    gulp.src('vocabfinder/src/less/**/*.less')
         .pipe(less())
         .pipe(minifyCSS())
         .pipe(concat('style.min.css'))
-        .pipe(gulp.dest('VocabFinder/static/css'));
+        .pipe(gulp.dest('vocabfinder/static/css'));
 });
 
 gulp.task('js', function() {
     gulp.src(['bower_components/bootstrap/dist/js/bootstrap.js',
         'bower_components/bootstrap-table/dist/bootstrap-table.js',
-        'VocabFinder/src/js/*.js'])
+        'vocabfinder/src/js/*.js'])
         .pipe(concat('page.js'))
         .pipe(uglify())
-        .pipe(gulp.dest('VocabFinder/static/js'));
+        .pipe(gulp.dest('vocabfinder/static/js'));
 });
 
 gulp.task('fonts', function() {
     gulp.src('bower_components/bootstrap/fonts/*')
-        .pipe(gulp.dest('VocabFinder/static/fonts'))
+        .pipe(gulp.dest('vocabfinder/static/fonts'))
 });
 
 gulp.task('watch', function() {
-    gulp.watch('VocabFinder/src/less/**/*.less', ['less']);
-    gulp.watch('VocabFinder/src/js/**/*.js', ['js']);
+    gulp.watch('vocabfinder/src/less/*.less', ['less']);
+    gulp.watch('vocabfinder/src/js/*.js', ['js']);
 });
 
 gulp.task('default', function(callback) {

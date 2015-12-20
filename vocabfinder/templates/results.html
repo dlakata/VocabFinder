@@ -3,7 +3,7 @@
 
 {% block body %}
 {% include 'partials/modal.html' %}
-{% if definitions|length != 0 %}
+{% if words|length != 0 %}
     <h3>The Words</h3>
     {% if vocab_set %}
         <p>Showing {{ num_words }} {{ difficulty }} from <a href="{{ url_for('saved_set_text', id=vocab_set.id) }}">{{ source }}</a>.</p>
@@ -15,8 +15,7 @@
     {% else %}
         <p><a href="{{ url_for_security('register') }}">Make an account</a> or <a href="{{ url_for_security('login') }}">log in</a> to save your lists.</p>
     {% endif %}
-    <p>Click on a word to see its context in the text, etymology, 
-        additional definitions, and pronunciation.</p>
+    <p>Click on a word to see its etymology, additional definitions, and pronunciation.</p>
     <table data-toggle="table" class="results table table-condensed table-responsive">
         <thead>
             <tr>
@@ -25,7 +24,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for word, def in definitions %}
+            {% for word, def in words %}
             <tr class="word_row">
                 <td class="word" data-toggle="modal" data-target="#myModal">{{ word }}</td>
                 <td class="definition">{{ def }}</td>

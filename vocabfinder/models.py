@@ -1,5 +1,6 @@
 from flask.ext.security import UserMixin, RoleMixin
 from vocabfinder import db
+from datetime import datetime
 
 roles_users = db.Table('roles_users',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
@@ -42,6 +43,10 @@ class VocabSet(db.Model):
     public = db.Column(db.Boolean())
     timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __init__(self):
+        public = False
+        timestamp = datetime.now()
 
     def __repr__(self):
         return '<VocabSet %r>' % (self.source)

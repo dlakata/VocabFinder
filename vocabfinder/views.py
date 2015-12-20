@@ -1,46 +1,31 @@
 """Handles requests to app"""
-from vocabfinder import app, db
-from flask.ext.security import Security, SQLAlchemyUserDatastore, current_user, \
+from vocabfinder import app, db, datastore
+from flask.ext.security import current_user, \
     login_user, logout_user, login_required, RegisterForm, LoginForm
 from flask import request, session, render_template, jsonify, \
     flash, redirect, url_for, g
 from models import User, Role, VocabSet
-from vocabfinder.process_words import TextAnalyzer
+from vocabfinder.process_words import TextAnalyzer, valid_words, difficulty_text
 from datetime import datetime
 from functools import wraps
 from urlparse import urlparse
 from urllib import urlopen
 import json
 
-datastore = SQLAlchemyUserDatastore(db, User, Role)
-security = Security(app, datastore)
-
 api_key = "&api_key=" + app.config['WORDNIK_API_KEY']
 base_url = "http://api.wordnik.com/v4/word.json/"
-
-analyzer = TextAnalyzer()
-valid_words = {
-    'sat': analyzer.sat_words,
-    'gre': analyzer.gre_words,
-    'hardest': analyzer.english_words
-}
-difficulty_text = {
-    'sat' : 'SAT words',
-    'gre' : 'GRE words',
-    'hardest' : 'of the hardest English words'
-}
 
 def owner_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         id = request.args.get('id', 0, type=int)
         vocab_set = VocabSet.query.get(id)
-        if vocab_set is None:
+        if not vocab_set:
             flash("Sorry, that vocab set couldn't be found")
             return redirect(url_for('index'))
         if g.user.is_anonymous() or g.user.id != vocab_set.user_id:
             flash("Sorry, only the vocab set's owner can do that")
-            return redirect(url_for_security('login', next=request.url))
+            return redirect(url_for('index'))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -107,12 +92,6 @@ def delete_vocab_set():
     datastore.commit()
     return ""
 
-@app.route('/get_context')
-def get_context():
-    """Returns the word's context"""
-    sentence = analyzer.get_sentence(request.args.get('word', '', type=str))
-    return jsonify(result=sentence)
-
 @app.route('/get_definitions')
 def get_definitions():
     """Returns the word's definitions"""
@@ -138,41 +117,28 @@ def get_pronunciation():
 def saved_set(id):
     """Displays a saved vocab set"""
     vocab_set = VocabSet.query.get(id)
-    if vocab_set is None:
+    if not vocab_set:
         flash("Sorry, that vocab set couldn't be found")
-        return redirect(url_for_security('login', next=request.url))
+        return redirect(url_for('index'))
     if (g.user.is_anonymous() or g.user.id != vocab_set.user_id) and not vocab_set.public:
         flash("Sorry, the owner hasn't made that vocab set publicly available")
-        return redirect(url_for_security('login', next=request.url))
-    difficulty = vocab_set.difficulty
-    num_words = vocab_set.num_words
-    valid = valid_words[difficulty]
-    difficulty_level = difficulty_text[difficulty]
-    words = analyzer.find_words(vocab_set.text.encode('utf-8'), valid)
-    defs = [analyzer.dictionary[word] for word in words[:num_words] if word in analyzer.dictionary]
-    definitions = zip(words, defs)
-    return render_template("results.html",
-            vocab_set=vocab_set,
-            num_words=num_words,
-            difficulty=difficulty_level,
-            source=vocab_set.source,
-            definitions=definitions)
+        return redirect(url_for('index'))
+    return render_vocab_set(vocab_set)
 
 @app.route('/saved_set/<int:id>/text')
 def saved_set_text(id):
     """Displays a saved vocab set"""
     vocab_set = VocabSet.query.get(id)
-    if vocab_set is None:
+    if not vocab_set:
         flash("Sorry, that vocab set couldn't be found")
-        return redirect(url_for_security('login', next=request.url))
+        return redirect(url_for('index'))
     if (g.user.is_anonymous() or g.user.id != vocab_set.user_id) and not vocab_set.public:
         flash("Sorry, the owner hasn't made that vocab set publicly available")
-        return redirect(url_for_security('login', next=request.url))
+        return redirect(url_for('index'))
     source = vocab_set.source
     if "http" in source:
         return redirect(source)
-    text = vocab_set.text.encode('utf-8')
-    return text
+    return vocab_set.text
 
 @app.route('/results')
 def results_no_data():
@@ -197,7 +163,8 @@ def results():
         source = book_input.filename
         if '.' in source and source.rsplit('.', 1)[1] in 'txt':
             book = book_input.stream.read()
-            words = analyzer.find_words(book, valid)
+            text = TextAnalyzer.clean_text(book)
+            words = TextAnalyzer.find_words(text, valid)
         else:
             flash("Please upload a .txt file")
             return redirect(url_for('index'))
@@ -206,30 +173,42 @@ def results():
             flash("Please enter a valid, http-prefixed URL.")
             return redirect(url_for('index'))
         source = website_input
-        words = analyzer.find_website_words(website_input, valid)
+        text = TextAnalyzer.clean_website_text(source)
+        words = TextAnalyzer.find_words(text, valid)
     elif text_input:
         source = "user input"
-        words = analyzer.find_words(text_input.encode('utf-8'), valid)
+        text = text_input
+        words = TextAnalyzer.find_words(text_input, valid)
     else:
         flash("You need to provide some input.")
         return redirect(url_for('index'))
-    defs = [analyzer.dictionary[word] for word in words[:num_words] if word in analyzer.dictionary]
-    definitions = zip(words, defs)
+    words = words[:num_words]
+    defs = [TextAnalyzer.define(word) for word in words]
+    word_data = zip(words, defs)
+    vocab_set = VocabSet()
+    vocab_set.source = source
+    vocab_set.text = text
+    vocab_set.difficulty = difficulty
+    vocab_set.num_words = num_words
+    vocab_set.user = g.user
     if g.user.is_authenticated():
-        vocab_set = VocabSet(source=source)
-        vocab_set.text = analyzer.text
-        vocab_set.difficulty = difficulty
-        vocab_set.num_words = num_words
-        vocab_set.public = False
-        vocab_set.timestamp = datetime.now()
-        vocab_set.user = g.user
         datastore.put(vocab_set)
         datastore.commit()
+    return render_vocab_set(vocab_set)
+
+def render_vocab_set(vocab_set):
+    difficulty = vocab_set.difficulty
+    num_words = vocab_set.num_words
+    valid = valid_words[difficulty]
+    difficulty_level = difficulty_text[difficulty]
+    words = TextAnalyzer.find_words(vocab_set.text, valid)[:num_words]
+    defs = [TextAnalyzer.define(word) for word in words]
+    word_data = zip(words, defs)
     return render_template("results.html",
             num_words=num_words,
             difficulty=difficulty_level,
-            source=source,
-            definitions=definitions)
+            source=vocab_set.source,
+            words=word_data)
 
 @app.errorhandler(404)
 def page_not_found(_):
@@ -250,9 +229,7 @@ def saved_lists():
     return render_template('saved_lists.html')
 
 def validate_url(url):
+    """Confirm that url is valid"""
     parse = urlparse(url)
-    if not parse.scheme:
-        return False
-    if len(parse.netloc.split('.')) == 1:
-        return False
-    return True
+    return parse.scheme and len(parse.netloc.split('.')) != 1
+
