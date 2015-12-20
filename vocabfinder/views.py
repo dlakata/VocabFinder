@@ -190,8 +190,8 @@ def results():
     vocab_set.text = text
     vocab_set.difficulty = difficulty
     vocab_set.num_words = num_words
-    vocab_set.user = g.user
     if g.user.is_authenticated():
+        vocab_set.user = g.user
         datastore.put(vocab_set)
         datastore.commit()
     return render_vocab_set(vocab_set)
